@@ -23,6 +23,12 @@ mongoose.connect(process.env.MONGODB_URI)
     console.error('❌ MongoDB Connection Error:', error.message);
   });
 
+// Import Routes
+const authRoutes = require('./routes/authRoutes');
+
+// Use Routes
+app.use('/api/auth', authRoutes);
+
 // Test route
 app.get('/api', (req, res) => {
   res.json({ 
@@ -37,6 +43,23 @@ app.get('/api/health', (req, res) => {
     status: 'OK', 
     timestamp: new Date(),
     database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ 
+    success: false,
+    message: 'Route not found' 
+  });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ 
+    success: false,
+    message: 'Internal server error' 
   });
 });
 
