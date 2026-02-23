@@ -1,68 +1,43 @@
+require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
-
-// Load environment variables
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 5000;
+const mongoose = require('mongoose');
+const cors = require('cors');
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Import routes
+const auth = require('./routes/authRoutes');    // ✅ One dot
+const fabrics = require('./routes/fabrics');    // ✅ One dot (FIXED!)
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('✅ MongoDB Connected Successfully!');
-    console.log('📊 Database:', mongoose.connection.name);
-  })
-  .catch((error) => {
-    console.error('❌ MongoDB Connection Error:', error.message);
-  });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/mygarbDataBase")
+    .then(() => console.log('✅ Connected to mygarbDataBase...'))
+    .catch(err => console.log('❌ MongoDB connection failed:', err));
 
-// Import Routes
-const authRoutes = require('./routes/authRoutes');
+// CORS Configuration
+const corsOptions = {
+    origin: ['http://localhost:3001', 'http://localhost:5173', 'http://localhost:5174'],
+    credentials: true,
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization']
+};
 
-// Use Routes
-app.use('/api/auth', authRoutes);
+app.use(cors(corsOptions));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Routes
+app.use('/api/mygarb/auth', auth);
+app.use('/api/mygarb/fabrics', fabrics);
 
 // Test route
 app.get('/api', (req, res) => {
-  res.json({ 
-    message: 'MYGARB Backend API is running! 🚀',
-    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
-  });
+    res.json({ 
+        message: 'MYGARB Backend API is running! 🚀',
+        database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    });
 });
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    timestamp: new Date(),
-    database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
-  });
-});
+const port = process.env.PORT || 5000;
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ 
-    success: false,
-    message: 'Route not found' 
-  });
-});
-
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(500).json({ 
-    success: false,
-    message: 'Internal server error' 
-  });
-});
-
-app.listen(PORT, () => {
-  console.log(`✅ MYGARB Backend running on http://localhost:${PORT}`);
-});
+app.listen(port, () => console.log(`✅ MYGARB Backend listening on port ${port}...`));
