@@ -175,7 +175,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create new fabric (Admin only)
-router.post('/', [auth, admin], async (req, res) => {
+router.post('/', auth, admin, async (req, res) => {
     try {
         const { error } = validate(req.body);
         if (error) return res.status(400).send(error.details[0].message);
@@ -205,7 +205,7 @@ router.post('/', [auth, admin], async (req, res) => {
 });
 
 // Update fabric (Admin only)
-router.put('/:id', [auth, admin], async (req, res) => {
+router.put('/:id', auth, admin, async (req, res) => {
     try {
         const { error } = validateUpdate(req.body);
         if (error) return res.status(400).send(error.details[0].message);
@@ -237,7 +237,7 @@ router.put('/:id', [auth, admin], async (req, res) => {
 });
 
 // Delete fabric (Admin only)
-router.delete('/:id', [auth, admin], async (req, res) => {
+router.delete('/:id', auth, admin, async (req, res) => {
     try {
         const fabric = await Fabric.findById(req.params.id);
         if (!fabric) return res.status(404).send('Fabric not found');

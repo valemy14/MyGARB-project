@@ -5,8 +5,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 // Import routes
-const auth = require('./routes/authRoutes');    // ✅ One dot
-const fabrics = require('./routes/fabrics');    // ✅ One dot (FIXED!)
+const auth = require('./routes/authRoutes');    
+const fabrics = require('./routes/fabrics');    
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/mygarbDataBase")

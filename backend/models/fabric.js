@@ -90,7 +90,7 @@ fabricSchema.index({ category: 1, featured: -1 });
 // Update inStock based on quantity
 fabricSchema.pre('save', function(next) {
     this.inStock = this.stock.quantity > 0;
-    next();
+    
 });
 
 const Fabric = mongoose.model('Fabric', fabricSchema);
