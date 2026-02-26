@@ -7,6 +7,8 @@ const cors = require('cors');
 // Import routes
 const auth = require('./routes/authRoutes');    
 const fabrics = require('./routes/fabrics');    
+const orders = require('./routes/orders'); 
+
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/mygarbDataBase")
@@ -29,6 +31,8 @@ app.use(express.json());
 // Routes
 app.use('/api/mygarb/auth', auth);
 app.use('/api/mygarb/fabrics', fabrics);
+app.use('/api/mygarb/orders', orders);
+
 
 // Test route
 app.get('/api', (req, res) => {
