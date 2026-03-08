@@ -1,68 +1,2770 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
+  font-family:'Poppins' sans-serif;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.purple-strip {
+  background: #673BB7;
+  height: 40px;
+  width: 100%;
+}
+
+.p-logo h6{
+  font-weight:600 ;
+  padding-left: 30px;
+  font-family: 'EucrosiaUPC';
+
+}
+
+/* .p-logo img{
+  width:100px;
+  height: 100px;
+} */
+
+.nav-bar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 50px;
+  padding-left: 25px;
+  padding-top: 20px;
+}
+
+ul{
+  display: flex;
+  gap: 40px;
+  list-style: none;
+}
+
+ul li a{
+  text-decoration: none;
+  color: #1E1E1E;
+}
+
+a:hover{
+  color: #673BB7;
+}
+
+.nav-right{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+}
+
+.btn-login {
+  padding: 10px 28px;
+  border: 2px solid #224F34;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #1a1a1a;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn-signup {
+  padding: 12px 32px;
+  border-radius: 18px;
+  background: #673BB7;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* ============================ */
+      /* hero section css starts here  */
+/* ============================ */
+.hero{
+   display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  padding: 40px 20px;
+
+}
+
+
+
+.first-bg{
+  position: absolute;
+  right: 0;
+  top: 150px;  
+  /* padding-right: 40px; */
+  /* margin-right: 36px; */
+  /* margin-top: 35px; */
+  width:455px ;
+}
+
+.second-bg{
+  position: absolute;
+  right: 0;
+  left: 3;
+  top: 150px;  
+  padding-right: 40px;
+   width:440px ;
+}
+
+.hero-left h3{
+  color: #1E1E1E;
+  font-weight: 900;
+  max-width: 1000px;
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.hero-left p{
+  font-size: 25px;
+  max-width: 600px;
+  font-weight: 400;
+  margin-bottom: 50px;
+}
+
+.hero-btn{
+  padding: 12px 32px;
+  border-radius: 12px;
+  background:#673BB7;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-family: 'EucrosiaUPC';
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  transition: all 0.3s ease;
+}
+
+
+/* ============================ */
+      /* key benefit section css starts here */
+/* ============================ */
+.key-benefit{
+  margin: 50px ;
+}
+
+.key-top{
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.key-top h6{
+  font-family: 'EucrosiaUPC';
+  font-weight: 800;
+  font-size: larger;
+}
+
+.key-top p{
+  font-weight: 450;
+}
+
+.key-hero{
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;   
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: stretch;             
+}
+
+
+.key-left img{
+  width: 100%;
+  max-width: 600px;
+}
+
+.key-right{
+  background-color: #FAFAFA;
+  border-radius: 20px;
+  justify-content: center;
+  position: relative; 
+}
+
+.line-break {
+  display: block;  
+}
+
+.kr-top{
+  background-color: #F1F1F1;
+  padding-top: 40px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 30px;
+  border-radius: 20px;
+}
+
+.kr-top p{
+  font-weight: 450;
+}
+
+.kr-bottom{
+  margin-top: 20px;
+  padding-bottom: 40px;
+  padding-left: 10px;
+}
+
+.kr-bottom ul {
+  list-style: none;        
+  padding: 0;
+  margin: 0;
+  display: flex;           
+  flex-direction: column;  
+  gap: 20px;               
+}
+
+.kr-bottom li {
+  display: flex;
+  align-items: center;     
+  gap: 10px;               
+}
+
+.kb-btn{
+  position: absolute;
+  top: 100%;               
+  left: 75%;               
+  transform: translateX(-50%);  
+  margin-top: 30px; 
+  
+  padding: 12px 32px;
+  border-radius: 12px;
+  background:#673BB7;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 60px 40px -7px;
+  transition: all 0.3s ease;
+}
+  
+
+
+/* ============================ */
+      /* how it works CSS starts here */
+/* ============================ */
+.hiw{
+  margin-top: 180px;
+  padding: 50px;
+}
+
+.hiw-top h3{
+  font-family: 'Playfair Display';
+  color: #2C2C2C;
+  font-weight: 600;
+}
+
+.hiw-top p{
+  font-family: 'Cormorant Garamond';
+  color: #4B5563;
+  font-weight: 100;
+}
+
+.hiw-bottom h6{
+  font-family: "EucrosiaUPC";
+  font-weight: bold;
+  font-size: large;
+  color: #2C2C2C;
+  margin-bottom: 20px;
+}
+
+.hiw-bottom p{
+  color: #4B5563;
+  font-size: smaller;
+}
+
+
+/* ========================================= */
+/* luxuriousDesignerClothes CSS starts here */
+/* ======================================== */
+
+.container-fluid{
+  padding: 20px 50px;
+}
+
+.text-center img{
+  width: 100%;
+}
+
+.Ldc-top h4{
+  font-family: 'Poppins';
+  font-weight: 600;
+  letter-spacing: 2px;
+  font-size: 30px;
+}
+
+.Ldc-top p{
+  font-size: small;
+  font-weight: 500;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.Ldc-bottom h6{
+  font-family: 'EucrosiaUPC';
+  font-weight: 700;
+}
+
+.Ldc-bottom p{
+  font-family: 'Poppins';
+  font-size: small;
+}
+
+
+/* ============================ */
+      /* styles CSS starts here */
+/* ============================ */
+
+.styles{
+  background-color: #FAFAFA;
+   padding: 20px 50px;
+}
+
+.row{
+  padding-top: 20px;
+}
+
+.styles-bottom p{
+  color: #373737;
+  font-family: 'Poppins';
+  font-weight: 600;
+  font-size: small;
+}
+
+
+/* ============================ */
+/* KeyFeatures CSS starts here */
+/* ============================ */
+
+.key-features {
+  background-color: #ffffff;
+  padding: 60px 50px;
+}
+
+/* --- Title --- */
+.kf-top {
+  margin-bottom: 48px;
+}
+
+.kf-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 40px;
+  color: #224F34;
+  letter-spacing: 2px;
+  word-spacing: 6px;
+}
+
+/* --- Body row --- */
+.kf-body {
+  padding-top: 10px;
+}
+
+/* --- Each column --- */
+.kf-col {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+}
+
+.kf-col:first-child {
+  gap: 14px; /* left column — tighter */
+}
+
+.kf-col:last-child {
+  gap: 28px; /* right column — more spaced */
+}
+
+/* --- Single feature row --- */
+.kf-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kf-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+/* Purple chevron › */
+.kf-chevron {
+  font-size: 22px;
+  color: #673BB7;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Purple square icon */
+.kf-icon {
+  width: 15px;
+  height: 25px;
+  background-color:#A574FF;
+  border-radius: 4px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* Feature label */
+.kf-text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #1E1E1E;
+  line-height: 1.5;
+}
+
+/* =================================*/
+/*   WhyChoosePhasionable.css       */
+/* ================================= */
+
+.why-choose {
+  background-color: #ffffff;
+  padding: 70px 60px;
+}
+
+/* --- Top section --- */
+.wc-top {
+  margin-bottom: 50px;
+}
+
+.wc-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: #2C2C2C;
+  margin-bottom: 16px;
+}
+
+.wc-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #4B5563;
+  max-width: 620px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* --- Cards row --- */
+.wc-row {
+  gap: 0;
+}
+
+.wc-col {
+  padding: 0 26px;
+  margin-bottom: 24px;
+}
+
+/* --- Individual card --- */
+.wc-card {
+  border-radius: 10px;
+  padding: 30px 30px 10px;
+  height: 210px; /* fixed height makes it rectangular */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* .wc-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+} */
+
+/* --- Icon --- */
+.wc-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+/* --- Card title --- */
+.wc-card-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #1a1a1a;
+  margin-bottom: 14px;
+}
+
+/* --- Card description --- */
+.wc-card-desc {
+  font-family: 'Cormorant Garamond';
+  font-size: 12px;
+  font-weight: 200;
+  color: #4B5563;
+  line-height: 1.65;
+  margin: 0;
+}
+
+
+/* =================================== */
+/*   MoreToExplore css  starts here               */
+/* =================================== */
+
+.mte {
+  background-color: #ffffff;
+  padding: 60px 12px;
+}
+
+/* --- Title --- */
+.mte-top {
+  margin-bottom: 40px;
+}
+
+.mte-title {
+  font-family: 'Roboto Mono', sans-serif;
+  font-weight: 700;
+  font-size: 42px;
+  color: #224F34;
+  letter-spacing: 4px;
+  word-spacing: 4px;
+}
+
+/* --- Row --- */
+.mte-row {
+  gap: 0;
+  align-items: flex-start;
+}
+
+/* --- Each column --- */
+.mte-col {
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 340px;                
+}
+
+/* --- Base image style --- */
+.mte-img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+/* Small image — col 1 */
+.mte-img--small {
+  height: 240px;
+}
+
+/* Large images — col 2 & 3 */
+.mte-img--large {
+  height: 300px; 
+}
+
+/* --- Captions --- */
+.mte-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1E1E1E;
+  margin-top: 14px;
+  text-align: center;
+}
+
+
+.mte-label--hidden {
+  visibility: hidden; /* takes up space but stays invisible */
+}
+
+
+/* ====================================== */
+/*   ContactSection css  starts here       */
+/* ======================================= */
+
+.contact {
+  background-color: #ffffff;
+  padding: 60px 60px;
+}
+
+/* --- Row --- */
+.contact-row {
+  min-height: 500px;
+}
+
+/* ── LEFT SIDE ── */
+.contact-left {
+  padding-right: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+}
+
+.contact-tagline {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  color: #1E1E1E;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.contact-desc {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #1E1E1E;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.contact-info {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact-info-item {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1E1E1E;
+  margin: 0;
+}
+
+/* ── RIGHT SIDE — Card ── */
+.contact-right {
+  padding-left: 0;
+}
+
+.contact-card {
+  background-color: #A574FF;
+  padding: 40px 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- Field wrapper --- */
+.contact-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* --- Labels --- */
+.contact-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+/* --- Text inputs --- */
+.contact-input {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 30px;
+  background-color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #1E1E1E;
+  outline: none;
+}
+
+.contact-input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+/* --- Textarea --- */
+.contact-textarea {
+  width: 100%;
+  height: 180px;
+  padding: 16px 20px;
+  border: none;
+  border-radius: 20px;
+  background-color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #1E1E1E;
+  outline: none;
+  resize: none;
+}
+
+.contact-textarea:focus {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
+}
+
+/* --- Send Message Button --- */
+.contact-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 30px;
+  background-color: #673BB7;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 4px;
+}
+
+.contact-btn:hover {
+  background-color: #4a2e85;
+  transform: translateY(-2px);
+}
+
+
+/* ====================================== */
+/*   CustomerReviews css   starts here     */
+/* ======================================= */
+
+.cr {
+  background-color: #FAFAFA;
+  padding: 70px 60px;
+}
+
+/* --- Top --- */
+.cr-top {
+  margin-bottom: 50px;
+}
+
+.cr-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 35px;
+  color: #2C2C2C;
+  letter-spacing: 2px;
+  word-spacing: 4px;
+  margin-bottom: 12px;
+}
+
+.cr-subtitle {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #4B5563;
+  margin: 0;
+}
+
+/* --- Row --- */
+.cr-row {
+  gap: 0;
+}
+
+/* --- Each column --- */
+.cr-col {
+  padding: 0 14px;
+  margin-bottom: 24px;
+}
+
+/* --- Card --- */
+.cr-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* .cr-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.1);
+} */
+
+/* --- Header: avatar + name + stars --- */
+.cr-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* --- Circular avatar --- */
+.cr-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* --- Name + stars stack --- */
+.cr-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cr-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+  color: #1E1E1E;
+  margin: 0;
+}
+
+/* --- Stars --- */
+.cr-stars {
+  display: flex;
+}
+
+.cr-star {
+  color: #FACC15;
+  font-size: 20px;
+  line-height: 1;
+  
+}
+
+/* --- Quote text --- */
+.cr-quote {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: #4B5563;
+  line-height: 1.7;
+  margin: 0;
+}
+
+
+/* =========================== */
+/*   Footer css starts here    */
+/* ============================ */
+
+.footer {
+  background-color: #673BB7;
+  padding: 60px 0 0;
+}
+
+.footer-container {
+  padding: 0 70px 0 20px;
+}
+
+/* --- Main Row --- */
+.footer-row {
+  padding-bottom: 60px;
+}
+
+.footer-col {
+  padding: 0 20px;
+  margin-bottom: 24px;
+}
+
+/* ── COL 1: Logo + Social ── */
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  font-size: 28px;
+  color: #ffffff;
+  letter-spacing: 1px;
+  margin-bottom: 28px;
+}
+
+.footer-social-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 14px;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.footer-social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.footer-social-icon:hover {
+  opacity: 0.75;
+}
+
+/* ── COL 2 & 3: Nav Links ── */
+.footer-col-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #ffffff;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
   margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
+  gap: 14px;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.footer-links li a {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #ffffff;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+.footer-links li a:hover {
+  opacity: 0.75;
+}
+
+/* ── COL 4: Newsletter ── */
+.footer-newsletter {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid #ffffff;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.footer-email-input {
+  flex: 1;
+  padding: 14px 18px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+.footer-email-input::placeholder {
+  color: #FFFFFF;
+}
+
+.footer-submit-btn {
+  padding: 14px 24px;
+  background-color: #A574FF;
+  border: none;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+.footer-submit-btn:hover {
+  background-color: #6D28D9;
+}
+
+/* ── Bottom Bar ── */
+.footer-bottom {
+  padding: 20px 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.footer-divider {
+  flex: 1; /* takes up all remaining space on the left */
+  border: none;
+  border-top: 3px solid #FFFFFF;
+  margin: 0;
+}
+
+.footer-bottom-links {
+  display: flex;
+  gap: 28px;
+  flex-shrink: 0; /* prevents links from shrinking */
+}
+.footer-bottom-links a {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.footer-bottom-links a:hover {
+  opacity: 0.75;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================ */
+/* MEDIA QUERRIES STARTS HERE */
+/* ============================================================ */
+
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — Header Component                           */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .nav-bar {
+    padding-left: 16px;
+    padding-right: 20px;
+    padding-top: 16px;
   }
-  a:hover {
-    color: #747bff;
+
+  ul {
+    gap: 20px;
   }
-  button {
-    background-color: #f9f9f9;
+
+  ul li a {
+    font-size: 13px;
+  }
+
+  .btn-login,
+  .btn-signup {
+    padding: 9px 20px;
+    font-size: 13px;
   }
 }
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+  .nav-bar {
+    position: relative;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  /* Logo stays top-left */
+  .p-logo {
+    flex: 1;
+  }
+
+  .p-logo h6 {
+    padding-left: 0;
+    font-size: 15px;
+  }
+
+  /* Hide nav links — wire a hamburger in JS to toggle these */
+  .nav-bar ul {
+    display: none;
+  }
+
+  /* Cart + buttons stay top-right */
+  .nav-right {
+    gap: 8px;
+  }
+
+  .cart-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .btn-login {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .btn-signup {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .purple-strip {
+    height: 32px;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .purple-strip {
+    height: 26px;
+  }
+
+  .nav-bar {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .p-logo h6 {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-right {
+    gap: 6px;
+  }
+
+  .cart-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Stack login/signup tighter on very small screens */
+  .btn-login {
+    padding: 7px 12px;
+    font-size: 11px;
+    border-radius: 14px;
+  }
+
+  .btn-signup {
+    padding: 7px 12px;
+    font-size: 11px;
+    border-radius: 14px;
+  }
+}
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — Home / Hero Component                      */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .hero {
+    padding: 30px 20px;
+    gap: 20px;
+  }
+
+  .hero-left h3 {
+    font-size: 32px;
+    line-height: 1.3;
+  }
+
+  .hero-left p {
+    font-size: 18px;
+    margin-bottom: 36px;
+  }
+
+  /* Shrink the overlapping images to fit */
+  .first-bg {
+    width: 340px;
+    top: 120px;
+  }
+
+  .second-bg {
+    width: 320px;
+    top: 120px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 36px 20px 48px;
+    gap: 40px;
+  }
+
+  .hero-left {
+    width: 100%;
+  }
+
+  .hero-left h3 {
+    font-size: 28px;
+    line-height: 1.35;
+    margin-bottom: 16px;
+  }
+
+  /* Remove <br> effect — let text wrap naturally */
+  .hero-left h3 br,
+  .hero-left p br {
+    display: none;
+  }
+
+  .hero-left p {
+    font-size: 16px;
+    max-width: 100%;
+    margin-bottom: 28px;
+  }
+
+  .hero-btn {
+    padding: 12px 28px;
+    font-size: 13px;
+  }
+
+  /* hero-right becomes a relative container so images stack/overlap properly */
+  .hero-right {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    height: 320px;   /* give it explicit height so absolutely placed images are visible */
+    margin: 0 auto;
+  }
+
+  /* Keep images absolutely positioned but now relative to .hero-right */
+  .first-bg {
+    position: absolute;
+    width: 78%;
+    top: 0;
+    right: 0;
+  }
+
+  .second-bg {
+    position: absolute;
+    width: 75%;
+    top: 20px;
+    left: 0;
+    padding-right: 0;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .hero {
+    padding: 24px 14px 36px;
+    gap: 32px;
+  }
+
+  .hero-left h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  .hero-left p {
+    font-size: 14px;
+    margin-bottom: 22px;
+  }
+
+  .hero-btn {
+    padding: 10px 24px;
+    font-size: 12px;
+  }
+
+  /* Slightly taller container on mobile so both images breathe */
+  .hero-right {
+    height: 260px;
+    max-width: 320px;
+  }
+
+  .first-bg {
+    width: 80%;
+  }
+
+  .second-bg {
+    width: 76%;
+    top: 24px;
+  }
+}
+
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — HowItWorks Component                       */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .hiw {
+    margin-top: 120px;
+    padding: 40px 30px;
+  }
+
+  .hiw-top h3 {
+    font-size: 26px;
+  }
+
+  .hiw-top p {
+    font-size: 15px;
+  }
+
+  .hiw-bottom h6 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .hiw-bottom p {
+    font-size: 13px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+  
+
+  .hiw {
+    margin-top: 60px;
+    padding: 36px 20px;
+  }
+
+  .hiw-top {
+    margin-bottom: 32px !important; /* override Bootstrap mb-5 */
+  }
+
+  .hiw-top h3 {
+    font-size: 24px;
+  }
+
+  .hiw-top p {
+    font-size: 14px;
+  }
+
+  .hiw-bottom h6 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .hiw-bottom p {
+    font-size: 13px;
+  }
+
+  /* Remove hardcoded <br> breaks so text wraps naturally in 2-col layout */
+  .hiw-bottom p br {
+    display: none;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+
+
+  .hiw {
+    margin-top: 40px;
+    padding: 28px 14px;
+  }
+
+  .hiw-top {
+    margin-bottom: 24px !important;
+  }
+
+  .hiw-top h3 {
+    font-size: 21px;
+  }
+
+  .hiw-top p {
+    font-size: 13px;
+  }
+
+  /* Center the step text on single-column layout */
+  .hiw-bottom .text-start {
+    text-align: center !important;
+  }
+
+  .hiw-bottom h6 {
+    font-size: 14px;
+  }
+
+  .hiw-bottom p {
+    font-size: 13px;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  /* Step number circles — slightly smaller on mobile */
+  .step-number {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 18px !important;
+  }
+}
+
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — KeyBenefit Component                       */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .key-benefit {
+    margin: 40px 24px;
+  }
+
+  .key-hero {
+    gap: 24px;
+  }
+
+  .key-left img {
+    max-width: 100%;
+  }
+
+  .kr-top {
+    padding: 28px 16px 16px;
+  }
+
+  .kr-bottom {
+    padding-left: 12px;
+  }
+
+  /* Push the button back into the flow a bit */
+  .kb-btn {
+    left: 70%;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+  .key-benefit {
+    margin: 32px 16px;
+  }
+
+  .key-top {
+    margin-bottom: 28px;
+  }
+
+  .key-top h6 {
+    font-size: 16px;
+  }
+
+  .key-top p {
+    font-size: 14px;
+  }
+
+  /* Stack the two-column grid into one column */
+  .key-hero {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  /* Image fills the full width */
+  .key-left img {
+    width: 100%;
+    max-width: 100%;
+    display: block;
+    border-radius: 12px;
+  }
+
+  .key-right {
+    border-radius: 16px;
+  }
+
+  .kr-top {
+    padding: 24px 16px 14px;
+    border-radius: 16px;
+  }
+
+  .kr-top p {
+    font-size: 14px;
+  }
+
+  /* Hide the <span> line break — let it reflow */
+  .line-break {
+    display: inline;
+  }
+
+  .kr-bottom {
+    padding-left: 14px;
+    padding-bottom: 28px;
+    margin-top: 16px;
+  }
+
+  .kr-bottom ul {
+    gap: 16px;
+  }
+
+  .kr-bottom li {
+    font-size: 14px;
+  }
+
+  .kr-bottom li img {
+    width: 28px;
+    height: 28px;
+  }
+
+
+  .kb-btn {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 8px auto 0;
+    display: block;
+    width: fit-content;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .key-benefit {
+    margin: 24px 12px;
+  }
+
+  .key-top h6 {
+    font-size: 15px;
+  }
+
+  .key-top p {
+    font-size: 13px;
+  }
+
+  .key-hero {
+    gap: 20px;
+  }
+
+  .kr-top {
+    padding: 18px 12px 12px;
+  }
+
+  .kr-top p {
+    font-size: 13px;
+  }
+
+  .kr-bottom {
+    padding-left: 10px;
+    padding-bottom: 20px;
+    margin-top: 12px;
+  }
+
+  .kr-bottom ul {
+    gap: 12px;
+  }
+
+  .kr-bottom li {
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .kr-bottom li img {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0; /* stop icons from squishing */
+  }
+
+  .kb-btn {
+    padding: 10px 24px;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — LuxuriousDesignerClothes        */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .container-fluid {
+    padding: 20px 30px;
+  }
+
+  .Ldc-top h4 {
+    font-size: 24px;
+    letter-spacing: 1.5px;
+  }
+
+  .Ldc-top p {
+    font-size: 13px;
+    max-width: 580px;
+  }
+
+  .Ldc-bottom h6 {
+    font-size: 15px;
+  }
+
+  .Ldc-bottom p {
+    font-size: 13px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+  
+  .container-fluid {
+    padding: 16px 20px;
+  }
+
+  .Ldc-top {
+    margin-bottom: 28px !important; /* override Bootstrap mb-5 */
+  }
+
+  .Ldc-top h4 {
+    font-size: 20px;
+    letter-spacing: 1px;
+    /* Tighten the spaced-out title on smaller screens */
+    word-spacing: 2px;
+  }
+
+  .Ldc-top p {
+    font-size: 13px;
+    max-width: 100%;
+  }
+
+  /* Remove <br> tags so text reflows naturally in stacked layout */
+  .Ldc-bottom p br {
+    display: none;
+  }
+
+  .Ldc-bottom h6 {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .Ldc-bottom p {
+    font-size: 13px;
+    max-width: 400px;
+    margin: 0 auto; /* centre the paragraph in single-column view */
+  }
+
+  /* Constrain image width so it doesn't stretch too wide on tablet */
+  .Ldc-bottom img.img-fluid {
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .container-fluid {
+    padding: 14px 12px;
+  }
+
+  .Ldc-top {
+    margin-bottom: 20px !important;
+  }
+
+  .Ldc-top h4 {
+    font-size: 17px;
+    letter-spacing: 0.5px;
+    word-spacing: 1px;
+    line-height: 1.4;
+  }
+
+  .Ldc-top p {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .Ldc-bottom img.img-fluid {
+    max-width: 90%;
+  }
+
+  .Ldc-bottom h6 {
+    font-size: 14px;
+  }
+
+  .Ldc-bottom p {
+    font-size: 12px;
+    max-width: 300px;
+  }
+}
+
+/* ============================================================ */
+/*   MEDIA QUERIES — Styles                   */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .styles {
+    padding: 20px 30px;
+  }
+
+  .styles-bottom p {
+    font-size: 13px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+ 
+
+  .styles {
+    padding: 16px 16px;
+  }
+
+  .row {
+    padding-top: 12px;
+  }
+
+  .styles-bottom p {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* Keep images from stretching too wide in 2-col layout */
+  .styles-bottom img.img-fluid {
+    max-width: 85%;
+    margin: 0 auto;
+    display: block;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  
+  .styles {
+    padding: 12px 12px;
+  }
+
+  .row {
+    padding-top: 8px;
+  }
+
+  .styles-bottom img.img-fluid {
+    max-width: 80%;
+    border-radius: 8px;
+  }
+
+  .styles-bottom p {
+    font-size: 12px;
+    margin-top: 6px;
+  }
+}
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — KeyFeatures Component                      */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .key-features {
+    padding: 48px 40px;
+  }
+
+  .kf-title {
+    font-size: 34px;
+    letter-spacing: 3px;
+  }
+
+  .kf-top {
+    margin-bottom: 36px;
+  }
+
+  .kf-col {
+    gap: 22px;
+    padding: 0 12px;
+  }
+
+  .kf-text {
+    font-size: 14px;
+  }
+
+  .kf-icon {
+    width: 22px;
+    height: 26px;
+  }
+
+  .kf-chevron {
+    font-size: 20px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+
+
+  .key-features {
+    padding: 40px 24px;
+  }
+
+  .kf-title {
+    font-size: 28px;
+    letter-spacing: 2px;
+    word-spacing: 3px;
+  }
+
+  .kf-top {
+    margin-bottom: 28px;
+  }
+
+  .kf-col {
+    gap: 20px;
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+
+  /* Add a subtle divider between the two stacked columns */
+  .kf-col:first-child {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 20px;
+  }
+
+  .kf-text {
+    font-size: 14px;
+  }
+
+  .kf-icon {
+    width: 20px;
+    height: 24px;
+  }
+
+  .kf-chevron {
+    font-size: 18px;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .key-features {
+    padding: 32px 14px;
+  }
+
+  .kf-title {
+    font-size: 22px;
+    letter-spacing: 1px;
+    word-spacing: 2px;
+  }
+
+  .kf-top {
+    margin-bottom: 22px;
+  }
+
+  .kf-col {
+    gap: 16px;
+    padding: 0 4px;
+  }
+
+  .kf-col:first-child {
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+
+  .kf-item {
+    gap: 8px;
+  }
+
+  .kf-chevron {
+    font-size: 16px;
+  }
+
+  .kf-icon {
+    width: 18px;
+    height: 21px;
+    border-radius: 3px;
+  }
+
+  .kf-text {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+}
+
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — WhyChoosePhasionable Component                        */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .why-choose {
+    padding: 56px 36px;
+  }
+
+  .wc-title {
+    font-size: 36px;
+  }
+
+  .wc-subtitle {
+    font-size: 14px;
+    max-width: 520px;
+  }
+
+  .wc-top {
+    margin-bottom: 40px;
+  }
+
+  .wc-card {
+    padding: 36px 24px 32px;
+  }
+
+  .wc-card-title {
+    font-size: 18px;
+  }
+
+  .wc-icon {
+    font-size: 34px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+  
+  .why-choose {
+    padding: 44px 20px;
+  }
+
+  .wc-top {
+    margin-bottom: 32px;
+  }
+
+  .wc-title {
+    font-size: 30px;
+  }
+
+  .wc-subtitle {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .wc-col {
+    padding: 0 12px;
+    margin-bottom: 20px;
+  }
+
+  .wc-card {
+    padding: 32px 28px;
+    border-radius: 16px;
+  }
+
+  .wc-card-title {
+    font-size: 18px;
+  }
+
+  .wc-card-desc {
+    font-size: 13px;
+  }
+
+  .wc-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .why-choose {
+    padding: 36px 14px;
+  }
+
+  .wc-top {
+    margin-bottom: 24px;
+  }
+
+  .wc-title {
+    font-size: 24px;
+    line-height: 1.3;
+  }
+
+  .wc-subtitle {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* Full width cards on mobile */
+  .wc-col {
+    padding: 0 8px;
+    margin-bottom: 16px;
+  }
+
+  .wc-card {
+    padding: 28px 20px;
+    border-radius: 14px;
+  }
+
+  .wc-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+  }
+
+  .wc-card-title {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+
+  .wc-card-desc {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
+
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — MoreToExplore Component                    */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .mte {
+    padding: 48px 24px;
+  }
+
+  .mte-title {
+    font-size: 34px;
+    letter-spacing: 3px;
+  }
+
+  .mte-top {
+    margin-bottom: 32px;
+  }
+
+  .mte-img--small {
+    height: 200px;
+  }
+
+  .mte-img--large {
+    height: 260px;
+  }
+
+  .mte-col {
+    padding: 0 8px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+  
+
+  .mte {
+    padding: 40px 20px;
+  }
+
+  .mte-title {
+    font-size: 28px;
+    letter-spacing: 2px;
+    word-spacing: 2px;
+  }
+
+  .mte-top {
+    margin-bottom: 28px;
+  }
+
+  .mte-col {
+    padding: 0 10px;
+    margin-bottom: 24px;
+     height: auto; 
+  }
+
+  /* Both image sizes become equal height when stacked */
+  .mte-img--small,
+  .mte-img--large {
+    height: 260px;
+  }
+
+  .mte-label {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .mte {
+    padding: 32px 12px;
+  }
+
+  .mte-title {
+    font-size: 22px;
+    letter-spacing: 1px;
+    word-spacing: 1px;
+  }
+
+  .mte-top {
+    margin-bottom: 20px;
+  }
+
+  .mte-col {
+    padding: 0 6px;
+    margin-bottom: 18px;
+     height: auto; 
+  }
+
+  .mte-img--small,
+  .mte-img--large {
+    height: 210px;
+    border-radius: 10px;
+  }
+
+  .mte-label {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+}
+
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — ContactSection                             */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .contact {
+    padding: 50px 36px;
+  }
+
+  .contact-left {
+    padding-right: 24px;
+  }
+
+  .contact-card {
+    padding: 36px 32px;
+  }
+
+  .contact-tagline {
+    font-size: 15px;
+  }
+
+  .contact-btn {
+    padding: 14px;
+    font-size: 14px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+ 
+
+  .contact {
+    padding: 44px 24px;
+  }
+
+  .contact-row {
+    min-height: unset;
+  }
+
+  /* Left side — centred text above the form */
+  .contact-left {
+    padding-right: 0;
+    padding-bottom: 36px;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
+
+  .contact-info {
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .contact-tagline {
+    font-size: 15px;
+  }
+
+  .contact-desc {
+    font-size: 13px;
+    max-width: 480px;
+  }
+
+  .contact-info-item {
+    font-size: 13px;
+  }
+
+  /* Right side — full width card */
+  .contact-right {
+    padding-left: 0;
+  }
+
+  .contact-card {
+    padding: 32px 28px;
+    gap: 16px;
+    border-radius: 16px;
+  }
+
+  .contact-label {
+    font-size: 13px;
+  }
+
+  .contact-input {
+    padding: 12px 18px;
+    font-size: 13px;
+  }
+
+  .contact-textarea {
+    height: 150px;
+    font-size: 13px;
+  }
+
+  .contact-btn {
+    padding: 14px;
+    font-size: 14px;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .contact {
+    padding: 36px 14px;
+  }
+
+  .contact-left {
+    padding-bottom: 28px;
+    gap: 12px;
+  }
+
+  .contact-tagline {
+    font-size: 14px;
+  }
+
+  .contact-desc {
+    font-size: 13px;
+  }
+
+  .contact-info-item {
+    font-size: 12px;
+  }
+
+  .contact-card {
+    padding: 24px 18px;
+    gap: 14px;
+    border-radius: 14px;
+  }
+
+  .contact-label {
+    font-size: 13px;
+  }
+
+  .contact-input {
+    padding: 11px 16px;
+    font-size: 13px;
+    border-radius: 24px;
+  }
+
+  .contact-textarea {
+    height: 130px;
+    padding: 12px 16px;
+    font-size: 13px;
+    border-radius: 16px;
+  }
+
+  .contact-btn {
+    padding: 13px;
+    font-size: 13px;
+    border-radius: 24px;
+  }
+}
+
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — CustomerReviews Component                  */
+
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .cr {
+    padding: 56px 36px;
+  }
+
+  .cr-title {
+    font-size: 34px;
+    letter-spacing: 1.5px;
+  }
+
+  .cr-top {
+    margin-bottom: 40px;
+  }
+
+  .cr-col {
+    padding: 0 10px;
+  }
+
+  .cr-card {
+    padding: 24px 20px;
+  }
+
+  .cr-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .cr-name {
+    font-size: 14px;
+  }
+
+  .cr-star {
+    font-size: 15px;
+  }
+
+  .cr-quote {
+    font-size: 13px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+  
+  .cr {
+    padding: 44px 20px;
+  }
+
+  .cr-top {
+    margin-bottom: 32px;
+  }
+
+  .cr-title {
+    font-size: 28px;
+    letter-spacing: 1px;
+    word-spacing: 2px;
+  }
+
+  .cr-subtitle {
+    font-size: 13px;
+  }
+
+  .cr-col {
+    padding: 0 10px;
+    margin-bottom: 18px;
+  }
+
+  .cr-card {
+    padding: 24px 20px;
+    gap: 14px;
+    border-radius: 14px;
+  }
+
+  .cr-avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .cr-name {
+    font-size: 14px;
+  }
+
+  .cr-star {
+    font-size: 15px;
+  }
+
+  .cr-quote {
+    font-size: 13px;
+    line-height: 1.65;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .cr {
+    padding: 36px 12px;
+  }
+
+  .cr-top {
+    margin-bottom: 24px;
+  }
+
+  .cr-title {
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    word-spacing: 1px;
+    line-height: 1.3;
+  }
+
+  .cr-subtitle {
+    font-size: 12px;
+  }
+
+  .cr-col {
+    padding: 0 6px;
+    margin-bottom: 14px;
+  }
+
+  .cr-card {
+    padding: 20px 16px;
+    gap: 12px;
+    border-radius: 12px;
+  }
+
+  .cr-header {
+    gap: 10px;
+  }
+
+  .cr-avatar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cr-name {
+    font-size: 13px;
+  }
+
+  .cr-star {
+    font-size: 14px;
+  }
+
+  .cr-quote {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+}
+
+
+/* ============================================================ */
+/*   MEDIA QUERIES — Footer Component                           */
+/* ============================================================ */
+/* ==============================
+   LARGE TABLET  (max-width: 1024px)
+   ============================== */
+@media (max-width: 1024px) {
+  .footer-container {
+    padding: 0 36px;
+  }
+
+  .footer-logo {
+    font-size: 24px;
+  }
+
+  .footer-col-title {
+    font-size: 13px;
+  }
+
+  .footer-links li a {
+    font-size: 13px;
+  }
+
+  .footer-email-input,
+  .footer-submit-btn {
+    font-size: 12px;
+    padding: 12px 16px;
+  }
+
+  .footer-bottom-links {
+    gap: 20px;
+  }
+}
+
+
+/* ==============================
+   TABLET  (max-width: 768px)
+   ============================== */
+@media (max-width: 768px) {
+
+
+  .footer {
+    padding: 44px 0 0;
+  }
+
+  .footer-container {
+    padding: 0 24px;
+  }
+
+  .footer-row {
+    padding-bottom: 40px;
+  }
+
+  .footer-col {
+    padding: 0 12px;
+    margin-bottom: 28px;
+  }
+
+  .footer-logo {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .footer-social-label {
+    font-size: 13px;
+  }
+
+  .footer-socials {
+    gap: 12px;
+  }
+
+  .footer-col-title {
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+
+  .footer-links {
+    gap: 12px;
+  }
+
+  .footer-links li a {
+    font-size: 13px;
+  }
+
+  /* Newsletter goes full width */
+  .footer-newsletter {
+    flex-direction: row; /* keep input + button side by side */
+  }
+
+  .footer-email-input {
+    font-size: 13px;
+    padding: 12px 14px;
+  }
+
+  .footer-submit-btn {
+    font-size: 12px;
+    padding: 12px 18px;
+  }
+
+  .footer-bottom-links {
+    gap: 16px;
+    justify-content: flex-end;
+  }
+
+  .footer-bottom-links a {
+    font-size: 12px;
+  }
+}
+
+
+/* ==============================
+   MOBILE  (max-width: 480px)
+   ============================== */
+@media (max-width: 480px) {
+  .footer {
+    padding: 36px 0 0;
+  }
+
+  .footer-container {
+    padding: 0 16px;
+  }
+
+  .footer-row {
+    padding-bottom: 32px;
+  }
+
+  .footer-col {
+    padding: 0 8px;
+    margin-bottom: 24px;
+  }
+
+  .footer-logo {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  /* SHOP & COMPANY sit col-6 col-6 on mobile — keep them side by side */
+  .footer-col-title {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .footer-links {
+    gap: 10px;
+  }
+
+  .footer-links li a {
+    font-size: 12px;
+  }
+
+  /* Newsletter stacks button below input on very small screens */
+  .footer-newsletter {
+    flex-direction: column;
+    border-radius: 4px;
+  }
+
+  .footer-email-input {
+    font-size: 13px;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .footer-submit-btn {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 12px;
+    text-align: center;
+  }
+
+  /* Bottom links */
+  .footer-bottom-links {
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .footer-bottom-links a {
+    font-size: 12px;
+  }
+}
+
+
+
+
