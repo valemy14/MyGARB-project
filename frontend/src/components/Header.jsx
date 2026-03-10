@@ -17,7 +17,9 @@ const Header = () => {
         </ul>
 
         <div className='nav-right'>
-          <img className='cart-icon' src={G4} alt="" />
+          <a href="/cart">
+            <img className='cart-icon' src={G4} alt="Cart" />
+          </a>
           <button className='btn-login'>LOG IN </button>
           <button className='btn-signup'>SIGN UP</button>
         </div>
