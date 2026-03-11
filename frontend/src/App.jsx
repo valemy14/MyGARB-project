@@ -18,6 +18,7 @@ import CustomerReviews from './pages/CustomerReviews';
 
 // Cart Page
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
 
 // Landing Page (all sections together)
 function LandingPage() {
@@ -52,6 +53,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/cart" element={<Cart />} />
+         <Route path="/checkout" element={<Checkout />} />
       </Routes>
       
       {shouldShowFooter && <Footer />}
