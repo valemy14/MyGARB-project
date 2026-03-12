@@ -2062,25 +2062,178 @@ a:hover{
   background: #f3e8ff;
 }
 
+/* ==========================================
+   FABRICS LISTING PAGE - FIXED VERSION
+   ========================================== */
+.fabrics-listing-page {
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 60px 0 100px 0;
+  margin: 0;
+  width: 100%;
+}
 
+.fabrics-listing-page .container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
 
+/* Products Header - Matching Figma */
+.products-header {
+  text-align: center;
+  margin-bottom: 45px;
+}
 
+.products-header h1 {
+  font-size: 42px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
+/* Category Tabs - Exact Figma Style */
+.category-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-bottom: 50px;
+  border-bottom: 1px solid #d5d5d5;
+  padding-bottom: 0;
+}
 
+.tab-btn {
+  background: none;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #000;
+  padding: 0 0 16px 0;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
+.tab-btn:hover {
+  opacity: 0.7;
+}
 
+.tab-btn.active {
+  font-weight: 600;
+}
 
+/* Active tab underline - Matching Figma */
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #000;
+}
 
+/* Products Grid - 4 columns like Figma */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  margin-bottom: 60px;
+  width: 100%;
+}
 
+/* Product Card - Clean & Simple like Figma */
+.product-card {
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
 
+.product-card:hover {
+  transform: translateY(-6px);
+}
 
+/* Product Image - FIXED: Complete images, not cut off */
+.product-image {
+  width: 100%;
+  height: 380px;
+  background: #f5f5f5;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.4s ease;
+}
 
+.product-card:hover .product-image img {
+  transform: scale(1.05);
+}
 
+/* Product Name - Matching Figma Typography */
+.product-name {
+  text-align: center;
+  padding: 0 8px;
+}
 
+.product-name h3 {
+  font-size: 15px;
+  font-weight: 500;
+  color: #000;
+  margin: 0;
+  line-height: 1.4;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
+/* See All Button - Exact Figma Style */
+.see-all-section {
+  text-align: center;
+  margin-top: 20px;
+}
 
+.btn-see-all {
+  padding: 14px 45px;
+  background: white;
+  color: #000;
+  border: 1.5px solid #000;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
+.btn-see-all .arrow {
+  font-size: 16px;
+  transition: transform 0.3s;
+}
+
+.btn-see-all:hover {
+  background: #000;
+  color: white;
+}
+
+.btn-see-all:hover .arrow {
+  transform: translateX(4px);
+}
 
 
 
@@ -4248,6 +4401,153 @@ a:hover{
 }
 
 
+/* ==========================================
+   FABRICS  PAGE RESPONSIVE
+   ========================================== */
+/* Responsive - Large Desktop (1400px+) */
+@media (min-width: 1400px) {
+  .product-image {
+    height: 420px;
+  }
+}
+
+/* Responsive - Desktop (1200px) */
+@media (max-width: 1200px) {
+  .fabrics-listing-page .container {
+    max-width: 1200px;
+    padding: 0 30px;
+  }
+
+  .product-image {
+    height: 350px;
+  }
+
+  .products-grid {
+    gap: 20px;
+  }
+}
+
+/* Responsive - Large Tablet (1024px) */
+@media (max-width: 1024px) {
+  .fabrics-listing-page .container {
+    padding: 0 25px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .product-image {
+    height: 340px;
+  }
+
+  .products-header h1 {
+    font-size: 38px;
+  }
+
+  .category-tabs {
+    gap: 35px;
+  }
+}
+
+/* Responsive - Tablet (768px) */
+@media (max-width: 768px) {
+  .fabrics-listing-page {
+    padding: 50px 0 80px 0;
+  }
+
+  .fabrics-listing-page .container {
+    padding: 0 20px;
+  }
+
+  .products-header h1 {
+    font-size: 34px;
+    margin-bottom: 10px;
+  }
+
+  .products-header {
+    margin-bottom: 35px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-bottom: 50px;
+  }
+
+  .product-image {
+    height: 300px;
+  }
+
+  .category-tabs {
+    gap: 25px;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding: 0 0 12px 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: 40px;
+  }
+
+  .category-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    font-size: 14px;
+    white-space: nowrap;
+    padding: 0 0 14px 0;
+  }
+
+  .product-name h3 {
+    font-size: 14px;
+  }
+}
+
+/* Responsive - Mobile (480px) */
+@media (max-width: 480px) {
+  .fabrics-listing-page {
+    padding: 40px 0 60px 0;
+  }
+
+  .fabrics-listing-page .container {
+    padding: 0 15px;
+  }
+
+  .products-header h1 {
+    font-size: 28px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 40px;
+  }
+
+  .product-image {
+    height: 240px;
+    margin-bottom: 10px;
+  }
+
+  .product-name h3 {
+    font-size: 13px;
+  }
+
+  .category-tabs {
+    gap: 18px;
+  }
+
+  .tab-btn {
+    font-size: 12px;
+    padding: 0 0 12px 0;
+  }
+
+  .btn-see-all {
+    padding: 12px 35px;
+    font-size: 13px;
+  }
+}
 
 
 

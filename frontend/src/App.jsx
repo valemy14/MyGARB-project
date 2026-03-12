@@ -16,6 +16,7 @@ import MoreToExplore from './pages/MoreToExplore';
 import ContactSection from './pages/ContactSection';
 import CustomerReviews from './pages/CustomerReviews';
 import FabricDetails from './pages/FabricDetails';
+import Fabrics from './pages/Fabrics';
 
 // Cart Page
 import Cart from './pages/Cart';
@@ -58,6 +59,7 @@ function AppContent() {
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/product" element={<FabricDetails />} />
+        <Route path="/fabrics" element={<Fabrics />} />
       </Routes>
       
       {shouldShowFooter && <Footer />}
