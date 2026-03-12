@@ -67,11 +67,14 @@ function Checkout() {
     try {
       // Prepare order data for API
       const orderData = {
-        items: cartItems.map(item => ({
-          fabric: item.id, // In real app, this would be the actual fabric ID
-          quantity: item.quantity,
-          unit: item.unit
-        })),
+  items: cartItems.map(item => ({
+    fabric: item.id,
+    quantity: item.quantity,
+    unit: item.unit === 'yard' ? 'yards' : 
+          item.unit === 'meter' ? 'meters' : 
+          item.unit === 'piece' ? 'pieces' : 
+          item.unit  // Convert singular to plural
+  })),
         shippingAddress: {
           fullName: formData.fullName,
           phone: formData.phone,

@@ -8,7 +8,7 @@ function Cart() {
       category: 'Ankara',
       price: 2500,
       quantity: 2,
-      unit: 'yard'
+      unit: 'yards'
     },
     {
       id: 2,
@@ -16,7 +16,7 @@ function Cart() {
       category: 'Silk',
       price: 5000,
       quantity: 1,
-      unit: 'meter'
+      unit: 'meters'
     }
   ]);
 

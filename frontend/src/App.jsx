@@ -15,10 +15,12 @@ import WhyChoosePhasionable from './pages/WhyChoosePhasionable';
 import MoreToExplore from './pages/MoreToExplore';
 import ContactSection from './pages/ContactSection';
 import CustomerReviews from './pages/CustomerReviews';
+import FabricDetails from './pages/FabricDetails';
 
 // Cart Page
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import OrderConfirmation from './pages/OrderConfirmation';
 
 // Landing Page (all sections together)
 function LandingPage() {
@@ -43,7 +45,7 @@ function AppContent() {
   const location = useLocation();
   
   // Pages where footer should NOT show
-  const hideFooterOnPages = ['/cart', '/checkout'];
+  const hideFooterOnPages = ['/cart', '/checkout', '/order-confirmation'];
   const shouldShowFooter = !hideFooterOnPages.includes(location.pathname);
 
   return (
@@ -53,7 +55,9 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/cart" element={<Cart />} />
-         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <Route path="/product" element={<FabricDetails />} />
       </Routes>
       
       {shouldShowFooter && <Footer />}
