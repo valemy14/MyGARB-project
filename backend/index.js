@@ -17,11 +17,12 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/mygarbDat
 
 // CORS Configuration
 const corsOptions = {
-    origin: ['http://localhost:3001', 'http://localhost:5173', 'http://localhost:5174'],
-    credentials: true,
-    optionsSuccessStatus: 200,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization']
+  origin: ['http://localhost:3001', 'http://localhost:5173', 'http://localhost:5174'],
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'x-auth-token', 'Authorization'],
+  exposedHeaders: ['x-auth-token']
 };
 
 app.use(cors(corsOptions));
