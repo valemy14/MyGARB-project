@@ -1,10 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import './App.css';
-
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-// Landing Page Sections
+// Landing page sections
 import Home from './pages/Home';
 import KeyBenefit from './pages/KeyBenefit';
 import HowItWorks from './pages/HowItWorks';
@@ -15,15 +13,17 @@ import WhyChoosePhasionable from './pages/WhyChoosePhasionable';
 import MoreToExplore from './pages/MoreToExplore';
 import ContactSection from './pages/ContactSection';
 import CustomerReviews from './pages/CustomerReviews';
-import FabricDetails from './pages/FabricDetails';
-import Fabrics from './pages/Fabrics';
+// import OurDesigners from './pages/OurDesigners';
 
-// Cart Page
+// Other pages
+import Fabrics from './pages/Fabrics';
+import FabricDetails from './pages/FabricDetails';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
-// Landing Page (all sections together)
 function LandingPage() {
   return (
     <>
@@ -41,25 +41,34 @@ function LandingPage() {
   );
 }
 
-// Main App Component
 function AppContent() {
   const location = useLocation();
   
-  // Pages where footer should NOT show
+  // Pages where we hide BOTH header and footer
+  const hideHeaderFooterOnPages = ['/login', '/signup'];
+  
+  // Pages where we only hide footer
   const hideFooterOnPages = ['/cart', '/checkout', '/order-confirmation'];
-  const shouldShowFooter = !hideFooterOnPages.includes(location.pathname);
-
+  
+  const shouldShowHeader = !hideHeaderFooterOnPages.includes(location.pathname);
+  const shouldShowFooter = !hideHeaderFooterOnPages.includes(location.pathname) && 
+                           !hideFooterOnPages.includes(location.pathname);
+  
   return (
     <>
-      <Header />
+      {shouldShowHeader && <Header />}
       
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/fabrics" element={<Fabrics />} />
+        <Route path="/fabric/:id" element={<FabricDetails />} />
+        <Route path="/product" element={<FabricDetails />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
-        <Route path="/product" element={<FabricDetails />} />
-        <Route path="/fabrics" element={<Fabrics />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        {/* <Route path="/ourdesigners" element={<OurDesigners />} /> */}
       </Routes>
       
       {shouldShowFooter && <Footer />}
@@ -67,13 +76,10 @@ function AppContent() {
   );
 }
 
-// Root App with Router
-function App() {
+export default function App() {
   return (
     <Router>
       <AppContent />
     </Router>
   );
 }
-
-export default App;

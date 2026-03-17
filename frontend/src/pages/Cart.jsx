@@ -1,52 +1,64 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getUserCart, saveUserCart } from '../utils/cartHelpers';
 
 function Cart() {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: 'Premium Ankara Fabric',
-      category: 'Ankara',
-      price: 2500,
-      quantity: 2,
-      unit: 'yards'
-    },
-    {
-      id: 2,
-      name: 'Luxury Silk Fabric',
-      category: 'Silk',
-      price: 5000,
-      quantity: 1,
-      unit: 'meters'
-    }
-  ]);
+  // Get user-specific cart
+  const [cartItems, setCartItems] = useState(() => getUserCart());
 
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+  // Save to user-specific cart when changed
+  useEffect(() => {
+    saveUserCart(cartItems);
+  }, [cartItems]);
+
+  // Calculate totals
+  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const shipping = 0;  // Free shipping
+  const total = subtotal + shipping;
+
+  // Remove item from cart
+  const removeFromCart = (id) => {
+    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
   };
 
-  const updateQuantity = (id, newQty) => {
-    if (newQty < 1) {
-      removeItem(id);
+  // Update quantity
+  const updateQuantity = (id, newQuantity) => {
+    const qty = parseInt(newQuantity);
+    
+    if (qty <= 0 || isNaN(qty)) {
+      removeFromCart(id);
       return;
     }
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: newQty } : item
-    ));
+    
+    if (qty > 9999) {
+      alert('Maximum quantity is 9999');
+      return;
+    }
+    
+    if (qty > 100) {
+      const confirm = window.confirm(
+        `You're ordering ${qty} units. This is a large order. Continue?`
+      );
+      if (!confirm) return;
+    }
+    
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.id === id ? { ...item, quantity: qty } : item
+      )
+    );
   };
-
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = subtotal > 50000 ? 0 : 2000;
-  const total = subtotal + shipping;
 
   if (cartItems.length === 0) {
     return (
-      <div className="cart-empty">
-        <h1>YOUR CART</h1>
-        <div className="empty-message">
-          <p style={{fontSize: '60px'}}>🛒</p>
-          <h2>Your Cart is Empty</h2>
-          <p>Add some fabrics to get started!</p>
-          <a href="/" className="btn-shop">Browse Fabrics</a>
+      <div className="cart-page">
+        <div className="cart-container">
+          <h1>SHOPPING CART</h1>
+          <div className="empty-cart">
+            <p style={{fontSize: '60px'}}>🛒</p>
+            <h2>Your Cart is Empty</h2>
+            <p>Start adding items to your cart!</p>
+            <a href="/fabrics" className="btn-continue-shopping">Browse Fabrics</a>
+          </div>
         </div>
       </div>
     );
@@ -55,51 +67,69 @@ function Cart() {
   return (
     <div className="cart-page">
       <div className="cart-container">
-        <h1>YOUR CART</h1>
-        <p>{cartItems.length} items</p>
+        <h1>SHOPPING CART</h1>
 
-        <div className="cart-grid">
+        <div className="cart-content">
+          {/* Cart Items */}
           <div className="cart-items">
-            {cartItems.map(item => (
-              <div key={item.id} className="cart-item">
+            {cartItems.map((item, index) => (
+              <div key={`${item.id}-${index}`} className="cart-item">
                 <div className="item-image">
-                  <div className="placeholder">📦</div>
+                  <div className="placeholder-image">📦</div>
                 </div>
 
-                <div className="item-info">
+                <div className="item-details">
                   <h3>{item.name}</h3>
-                  <p className="category">{item.category}</p>
-                  <p className="price-per">₦{item.price.toLocaleString()} per {item.unit}</p>
+                  <p className="item-category">{item.category}</p>
+                  <p className="item-price">₦{item.price?.toLocaleString() || 0} per {item.unit}</p>
+                  
+                  {/* Show measurements if available */}
+                  {item.measurements && Object.values(item.measurements).some(val => val) && (
+                    <div className="item-measurements">
+                      <p><strong>Measurements:</strong></p>
+                      {item.measurements.chest && <p>Chest: {item.measurements.chest}"</p>}
+                      {item.measurements.waist && <p>Waist: {item.measurements.waist}"</p>}
+                      {item.measurements.hips && <p>Hips: {item.measurements.hips}"</p>}
+                      {item.measurements.shoulder && <p>Shoulder: {item.measurements.shoulder}"</p>}
+                      {item.measurements.sleeveLength && <p>Sleeve: {item.measurements.sleeveLength}"</p>}
+                      {item.measurements.length && <p>Length: {item.measurements.length}"</p>}
+                    </div>
+                  )}
                 </div>
 
                 <div className="item-quantity">
-                  <label>Quantity</label>
-                  <div className="qty-controls">
-                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>−</button>
-                    <input 
-                      type="number" 
-                      value={item.quantity}
-                      onChange={(e) => updateQuantity(item.id, parseInt(e.target.value) || 1)}
-                    />
-                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
-                  </div>
+                  <label>Quantity:</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="9999"
+                    value={item.quantity || 1}
+                    onChange={(e) => updateQuantity(item.id, e.target.value)}
+                  />
                 </div>
 
                 <div className="item-total">
-                  <p>Total</p>
-                  <h4>₦{(item.price * item.quantity).toLocaleString()}</h4>
+                  <p className="total-label">Total:</p>
+                  <p className="total-price">₦{((item.price || 0) * (item.quantity || 1)).toLocaleString()}</p>
                 </div>
 
-                <button className="remove-btn" onClick={() => removeItem(item.id)}>✕</button>
+                <button 
+                  className="btn-remove"
+                  onClick={() => removeFromCart(item.id)}
+                  aria-label="Remove item"
+                >
+                  ✕
+                </button>
               </div>
             ))}
           </div>
 
+          {/* Cart Summary */}
           <div className="cart-summary">
             <h2>Order Summary</h2>
-            
+
             <div className="summary-row">
-              <span>Subtotal</span>
+              <span>Subtotal ({cartItems.length} item{cartItems.length > 1 ? 's' : ''})</span>
               <span>₦{subtotal.toLocaleString()}</span>
             </div>
 
@@ -108,21 +138,18 @@ function Cart() {
               <span>{shipping === 0 ? 'FREE' : `₦${shipping.toLocaleString()}`}</span>
             </div>
 
-            {subtotal < 50000 && (
-              <p className="shipping-note">
-                Add ₦{(50000 - subtotal).toLocaleString()} for free shipping!
-              </p>
-            )}
+            <div className="summary-divider"></div>
 
-            <hr />
-
-            <div className="summary-total">
-              <span>TOTAL</span>
+            <div className="summary-row summary-total">
+              <span>Total</span>
               <span>₦{total.toLocaleString()}</span>
             </div>
 
-            <a href="/checkout" className="btn-checkout">Proceed to Checkout</a>
-            <a href="/" className="btn-continue">Continue Shopping</a>
+            <button className="btn-checkout" onClick={() => window.location.href = '/checkout'}>
+              Proceed to Checkout
+            </button>
+
+            <a href="/fabrics" className="btn-continue-shopping">Continue Shopping</a>
           </div>
         </div>
       </div>

@@ -1,23 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { getUserCart, clearUserCart } from '../utils/cartHelpers';
 
 function Checkout() {
-  // Get cart items (from dummy data for now)
-  const [cartItems] = useState([
-    {
-      id: 1,
-      name: 'Premium Ankara Fabric',
-      price: 2500,
-      quantity: 2,
-      unit: 'yard'
-    },
-    {
-      id: 2,
-      name: 'Luxury Silk Fabric',
-      price: 5000,
-      quantity: 1,
-      unit: 'meter'
-    }
-  ]);
+  // Get user-specific cart
+  const [cartItems] = useState(() => getUserCart());
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -67,14 +53,14 @@ function Checkout() {
     try {
       // Prepare order data for API
       const orderData = {
-  items: cartItems.map(item => ({
-    fabric: item.id,
-    quantity: item.quantity,
-    unit: item.unit === 'yard' ? 'yards' : 
-          item.unit === 'meter' ? 'meters' : 
-          item.unit === 'piece' ? 'pieces' : 
-          item.unit  // Convert singular to plural
-  })),
+        items: cartItems.map(item => ({
+          fabric: item.id,
+          quantity: item.quantity,
+          unit: item.unit === 'yard' ? 'yards' : 
+                item.unit === 'meter' ? 'meters' : 
+                item.unit === 'piece' ? 'pieces' : 
+                item.unit
+        })),
         shippingAddress: {
           fullName: formData.fullName,
           phone: formData.phone,
@@ -95,7 +81,7 @@ function Checkout() {
         paymentMethod: 'paystack'
       };
 
-      // Get token from localStorage (if user is logged in)
+      // Get token from localStorage
       const token = localStorage.getItem('mygarb_token');
 
       // Make API call
@@ -103,7 +89,7 @@ function Checkout() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token || '' // Include token if available
+          'x-auth-token': token || ''
         },
         body: JSON.stringify(orderData)
       });
@@ -114,11 +100,13 @@ function Checkout() {
 
       const result = await response.json();
       
-      // Success! Redirect to confirmation page
+      // Success! Clear THIS user's cart
+      clearUserCart();
+      
+      // Success message
       alert('Order placed successfully! Order #' + result.data.orderNumber);
       
-      // Clear cart and redirect
-      localStorage.removeItem('mygarb_cart');
+      // Redirect to confirmation page
       window.location.href = '/order-confirmation?order=' + result.data._id;
 
     } catch (err) {
@@ -226,23 +214,25 @@ function Checkout() {
                 <div className="form-group">
                   <label>Chest (inches)</label>
                   <input
-                    type="number"
-                    name="chest"
-                    value={formData.chest}
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName || ''}  // ✅ Default to empty string
                     onChange={handleChange}
-                    placeholder="e.g. 42"
-                  />
+                    placeholder="Enter your full name"
+                    required
+                    />
                 </div>
 
                 <div className="form-group">
                   <label>Waist (inches)</label>
-                  <input
-                    type="number"
-                    name="waist"
-                    value={formData.waist}
+                                    <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName || ''}  // ✅ Default to empty string
                     onChange={handleChange}
-                    placeholder="e.g. 34"
-                  />
+                    placeholder="Enter your full name"
+                    required
+                    />
                 </div>
               </div>
 
@@ -250,23 +240,25 @@ function Checkout() {
                 <div className="form-group">
                   <label>Hips (inches)</label>
                   <input
-                    type="number"
-                    name="hips"
-                    value={formData.hips}
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName || ''}  // ✅ Default to empty string
                     onChange={handleChange}
-                    placeholder="e.g. 40"
-                  />
+                    placeholder="Enter your full name"
+                    required
+                    />
                 </div>
 
                 <div className="form-group">
                   <label>Shoulder (inches)</label>
                   <input
-                    type="number"
-                    name="shoulder"
-                    value={formData.shoulder}
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName || ''}  // ✅ Default to empty string
                     onChange={handleChange}
-                    placeholder="e.g. 18"
-                  />
+                    placeholder="Enter your full name"
+                    required
+                    />
                 </div>
               </div>
 
@@ -274,23 +266,25 @@ function Checkout() {
                 <div className="form-group">
                   <label>Sleeve Length (inches)</label>
                   <input
-                    type="number"
-                    name="sleeveLength"
-                    value={formData.sleeveLength}
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName || ''}  // ✅ Default to empty string
                     onChange={handleChange}
-                    placeholder="e.g. 24"
-                  />
+                    placeholder="Enter your full name"
+                    required
+                    />
                 </div>
 
                 <div className="form-group">
                   <label>Length (inches)</label>
                   <input
-                    type="number"
-                    name="length"
-                    value={formData.length}
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName || ''}  // ✅ Default to empty string
                     onChange={handleChange}
-                    placeholder="e.g. 28"
-                  />
+                    placeholder="Enter your full name"
+                    required
+                    />
                 </div>
               </div>
             </div>

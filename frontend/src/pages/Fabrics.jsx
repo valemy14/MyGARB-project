@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { P1, P2, P3, P5, P6, P7, P8, P9, P10, P11, P12, P13 } from '../assets/Index';
 
 function Fabrics() {
-  const [activeTab, setActiveTab] = useState('HOT');
+ 
+  const USE_API = true;  // ← Change to true when company data is ready
+  const [fabrics, setFabrics] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState('All');
 
   // PLACEHOLDER DATA - Using local images
   const placeholderFabrics = [
@@ -43,8 +48,74 @@ function Fabrics() {
     { id: 24, name: 'Custom Design 4', image: P13, category: 'CUSTOMIZATION' },
   ];
 
+  useEffect(() => {
+    if (USE_API) {
+      fetchFabrics();
+    } else {
+      setFabrics(placeholderFabrics);
+    }
+  }, []);
+
+  const fetchFabrics = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const response = await fetch('http://localhost:5000/api/mygarb/fabrics');
+      if (!response.ok) throw new Error('Failed to fetch fabrics');
+
+      const result = await response.json();
+      const mappedFabrics = result.data.map(fabric => ({
+        id: fabric._id,
+        name: fabric.name,
+        image: fabric.images?.[0]?.url || 'https://via.placeholder.com/300x400',
+        category: fabric.category,
+      }));
+
+      setFabrics(mappedFabrics);
+    } catch (err) {
+      setError(err.message || 'Failed to load fabrics');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
   // Filter fabrics by active tab
-  const filteredFabrics = placeholderFabrics.filter(fabric => fabric.category === activeTab);
+   const filteredFabrics = activeTab === 'All' 
+  ? fabrics 
+  : fabrics.filter(fabric => fabric.category === activeTab);
+
+   if (loading) {
+    return (
+      <div className="fabrics-listing-page">
+        <div className="container">
+          <div className="loading-state">
+            <div className="spinner"></div>
+            <p>Loading fabrics...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="fabrics-listing-page">
+        <div className="container">
+          <div className="error-state">
+            <div className="error-icon">⚠️</div>
+            <h2>Oops! Something went wrong</h2>
+            <p>{error}</p>
+            <button onClick={() => USE_API ? fetchFabrics() : setFabrics(placeholderFabrics)} className="btn-retry">
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fabrics-listing-page">
@@ -57,47 +128,59 @@ function Fabrics() {
 
         {/* Category Tabs */}
         <div className="category-tabs">
-          <button
-            className={`tab-btn ${activeTab === 'Sale' ? 'active' : ''}`}
-            onClick={() => setActiveTab('Sale')}
-          >
-            Sale
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'HOT' ? 'active' : ''}`}
-            onClick={() => setActiveTab('HOT')}
-          >
-            HOT
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'New Arrivals' ? 'active' : ''}`}
-            onClick={() => setActiveTab('New Arrivals')}
-          >
-            New Arrivals
-          </button>
-          <button
-            className={`tab-btn ${activeTab === 'CUSTOMIZATION' ? 'active' : ''}`}
-            onClick={() => setActiveTab('CUSTOMIZATION')}
-          >
-            CUSTOMIZATION
-          </button>
-        </div>
+                <button
+                    className={`tab-btn ${activeTab === 'All' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('All')}
+                >
+                    All Fabrics
+                </button>
+                <button
+                    className={`tab-btn ${activeTab === 'Ankara' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('Ankara')}
+                >
+                    Ankara
+                </button>
+                <button
+                    className={`tab-btn ${activeTab === 'Silk' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('Silk')}
+                >
+                    Silk
+                </button>
+                <button
+                    className={`tab-btn ${activeTab === 'Lace' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('Lace')}
+                >
+                    Lace
+                </button>
+                <button
+                    className={`tab-btn ${activeTab === 'Cotton' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('Cotton')}
+                >
+                    Cotton
+                </button>
+                <button
+                    className={`tab-btn ${activeTab === 'Velvet' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('Velvet')}
+                >
+                    Velvet
+                </button>
+            </div>
 
         {/* Products Grid - NOW SHOWS 12 PRODUCTS (3 ROWS) */}
         <div className="products-grid">
           {filteredFabrics.slice(0, 12).map((fabric) => (
-            <div key={fabric.id} className="product-card">
-              
-              {/* Product Image */}
-              <div className="product-image">
-                <img src={fabric.image} alt={fabric.name} />
-              </div>
-
-              {/* Product Name */}
-              <div className="product-name">
-                <h3>{fabric.name}</h3>
-              </div>
-
+           <div 
+                key={fabric.id} 
+                className="product-card"
+                onClick={() => window.location.href = `/fabric/${fabric.id}`}
+                style={{ cursor: 'pointer' }}
+                >
+                <div className="product-image">
+                    <img src={fabric.image} alt={fabric.name} />
+                </div>
+                <div className="product-name">
+                    <h3>{fabric.name}</h3>
+                </div>
             </div>
           ))}
         </div>
