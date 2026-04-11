@@ -32,6 +32,18 @@ router.post('/register', async (req, res) => {
         // Save user
         await user.save();
 
+        // ✅ Auto-create designer profile if role is designer
+        if (req.body.role === 'designer') {
+        const { DesignerProfile } = require('../models/DesignerProfile');
+        const designerProfile = new DesignerProfile({
+            user: user._id,
+            businessName: req.body.businessName || `${req.body.name}'s Studio`,
+            bio: req.body.bio || 'Tell clients about yourself.',
+            specialties: req.body.specialties || ['casual_wear'],
+        });
+        await designerProfile.save();
+        }
+
         // Generate token
         const token = user.generateAuthToken();
 

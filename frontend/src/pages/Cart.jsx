@@ -22,32 +22,22 @@ function Cart() {
 
   // Update quantity
   const updateQuantity = (id, newQuantity) => {
-    const qty = parseInt(newQuantity);
-    
-    if (qty <= 0 || isNaN(qty)) {
-      removeFromCart(id);
-      return;
-    }
-    
-    if (qty > 9999) {
-      alert('Maximum quantity is 9999');
-      return;
-    }
-    
-    if (qty > 100) {
-      const confirm = window.confirm(
-        `You're ordering ${qty} units. This is a large order. Continue?`
-      );
-      if (!confirm) return;
-    }
-    
-    setCartItems(prevItems =>
-      prevItems.map(item =>
-        item.id === id ? { ...item, quantity: qty } : item
-      )
-    );
-  };
-
+  const qty = parseInt(newQuantity);
+  
+  if (qty <= 0 || isNaN(qty)) {
+    removeFromCart(id);
+    return;
+  }
+  
+  // Cap at 9999 silently
+  const finalQty = Math.min(qty, 9999);
+  
+  setCartItems(prevItems =>
+    prevItems.map(item =>
+      item.id === id ? { ...item, quantity: finalQty } : item
+    )
+  );
+};
   if (cartItems.length === 0) {
     return (
       <div className="cart-page">

@@ -1,21 +1,44 @@
+// ✅ CHANGED: removed getUserCart, saveUserCart imports (not needed for designer flow)
+// ✅ CHANGED: added useLocation, useNavigate imports
 import { useState } from 'react';
-import { getUserCart, clearUserCart } from '../utils/cartHelpers';
+import { useLocation, useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 function Checkout() {
-  // Get user-specific cart
-  const [cartItems] = useState(() => getUserCart());
+  const { state } = useLocation();
+  const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
+  // ====================================================
+  // 🧪 TEST DATA — REMOVE THIS BLOCK WHEN DESIGNER 
+  // FLOW (chat → agree price → navigate to checkout) IS READY
+  // ====================================================
+  const testState = {
+    designer: '6748a1b2c3d4e5f6a7b8c9d0',  // fake designer ID for testing
+    designerName: 'Adire by Tola',
+    agreedAmount: 5000,                      // ₦5,000 test charge
+    orderDescription: 'Custom agbada - test order',
+    collection: null,
+    conversation: null
+  };
+  // Uses real state if coming from designer page, otherwise uses test data above
+  const orderContext = state?.designer ? state : testState;
+  const { designer, designerName, agreedAmount, orderDescription, collection, conversation } = orderContext;
+  // ====================================================
+  // 🧪 END TEST DATA
+  // ====================================================
+
+  const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
 
-  // Form state
+  // ✅ CHANGED: removed cart-related fields (cartItems, subtotal, total)
+  // ✅ CHANGED: removed designNotes from formData (now comes from chat/orderDescription)
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
     address: '',
     city: '',
     state: '',
-    // Measurements (optional)
+    postalCode: '',
     chest: '',
     waist: '',
     hips: '',
@@ -24,50 +47,46 @@ function Checkout() {
     length: ''
   });
 
-  // Handle input changes
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setError('');
   };
 
-  // Calculate totals
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = subtotal > 50000 ? 0 : 2000;
-  const total = subtotal + shipping;
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
-    
-    // Basic validation
+    setError('');
+
     if (!formData.fullName || !formData.phone || !formData.address || !formData.city || !formData.state) {
-      setError('Please fill in all required shipping fields');
+      setError('Please fill in all required fields (Full Name, Phone, Address, City, State)');
       return;
     }
 
-    setLoading(true);
-    setError('');
+    const token = localStorage.getItem('mygarb_token');
+    if (!token) {
+      setError('Please login to continue');
+      setTimeout(() => navigate('/login'), 2000);
+      return;
+    }
+
+    setProcessing(true);
 
     try {
-      // Prepare order data for API
+      // ✅ CHANGED: orderData now sends designer fields instead of fabric cart items
       const orderData = {
-        items: cartItems.map(item => ({
-          fabric: item.id,
-          quantity: item.quantity,
-          unit: item.unit === 'yard' ? 'yards' : 
-                item.unit === 'meter' ? 'meters' : 
-                item.unit === 'piece' ? 'pieces' : 
-                item.unit
-        })),
+        designer,
+        agreedAmount,
+        orderDescription,
+        collection: collection || null,
+        conversation: conversation || null,
         shippingAddress: {
-          fullName: formData.fullName,
-          phone: formData.phone,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          country: 'Nigeria'
+          fullName: formData.fullName.trim(),
+          phone: formData.phone.trim(),
+          address: formData.address.trim(),
+          city: formData.city.trim(),
+          state: formData.state.trim(),
+          country: 'Nigeria',
+          postalCode: formData.postalCode.trim() || ''
         },
         customMeasurements: {
           chest: formData.chest ? Number(formData.chest) : undefined,
@@ -77,273 +96,182 @@ function Checkout() {
           sleeveLength: formData.sleeveLength ? Number(formData.sleeveLength) : undefined,
           length: formData.length ? Number(formData.length) : undefined,
           measurementUnit: 'inches'
-        },
-        paymentMethod: 'paystack'
+        }
       };
 
-      // Get token from localStorage
-      const token = localStorage.getItem('mygarb_token');
+      console.log('Sending order data:', orderData);
 
-      // Make API call
-      const response = await fetch('http://localhost:5000/api/mygarb/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token || ''
-        },
-        body: JSON.stringify(orderData)
-      });
+      const { data } = await api.post('/payment/init', orderData);
 
-      if (!response.ok) {
-        throw new Error('Failed to create order');
-      }
+      console.log('Payment init response:', data);
 
-      const result = await response.json();
-      
-      // Success! Clear THIS user's cart
-      clearUserCart();
-      
-      // Success message
-      alert('Order placed successfully! Order #' + result.data.orderNumber);
-      
-      // Redirect to confirmation page
-      window.location.href = '/order-confirmation?order=' + result.data._id;
+      if (!data.success) throw new Error(data.message || 'Payment initialization failed');
+
+      window.location.href = data.authorizationUrl;
 
     } catch (err) {
-      setError(err.message || 'Failed to place order. Please try again.');
+      console.error('Payment error:', err);
+      setError(err.message || 'Payment initialization failed. Please try again.');
     } finally {
-      setLoading(false);
+      setProcessing(false);
     }
   };
-
-  if (cartItems.length === 0) {
-    return (
-      <div className="checkout-empty">
-        <h1>CHECKOUT</h1>
-        <div className="empty-message">
-          <p style={{fontSize: '60px'}}>🛒</p>
-          <h2>Your Cart is Empty</h2>
-          <p>Add items to your cart before checking out</p>
-          <a href="/" className="btn-shop">Browse Fabrics</a>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="checkout-page">
       <div className="checkout-container">
-        <h1>CHECKOUT</h1>
+        <h1>Checkout</h1>
 
-        <form onSubmit={handleSubmit} className="checkout-grid">
-          {/* Left Column - Forms */}
-          <div className="checkout-forms">
-            {/* Shipping Information */}
-            <div className="form-section">
+        {error && (
+          <div className="error-message" style={{
+            padding: '15px',
+            background: '#ffebee',
+            border: '1px solid #ef5350',
+            borderRadius: '8px',
+            color: '#c62828',
+            marginBottom: '20px'
+          }}>
+            {error}
+          </div>
+        )}
+
+        <div className="checkout-content">
+          {/* Left Column - Form — UNCHANGED */}
+          <div className="checkout-form">
+
+            <div className="checkout-section">
               <h2>Shipping Information</h2>
-              
+
               <div className="form-group">
                 <label>Full Name *</label>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  required
-                />
+                <input type="text" name="fullName" value={formData.fullName}
+                  onChange={handleChange} placeholder="Enter your full name" autoComplete="off" />
               </div>
 
               <div className="form-group">
                 <label>Phone Number *</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="+234 XXX XXX XXXX"
-                  required
-                />
+                <input type="tel" name="phone" value={formData.phone}
+                  onChange={handleChange} placeholder="08012345678" autoComplete="off" />
               </div>
 
               <div className="form-group">
                 <label>Address *</label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Street address"
-                  required
-                />
+                <input type="text" name="address" value={formData.address}
+                  onChange={handleChange} placeholder="Street address" autoComplete="off" />
               </div>
 
               <div className="form-row">
                 <div className="form-group">
                   <label>City *</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    placeholder="City"
-                    required
-                  />
+                  <input type="text" name="city" value={formData.city}
+                    onChange={handleChange} placeholder="e.g. Lagos" autoComplete="off" />
                 </div>
-
                 <div className="form-group">
                   <label>State *</label>
-                  <input
-                    type="text"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleChange}
-                    placeholder="State"
-                    required
-                  />
+                  <input type="text" name="state" value={formData.state}
+                    onChange={handleChange} placeholder="e.g. Lagos" autoComplete="off" />
                 </div>
+              </div>
+
+              <div className="form-group">
+                <label>Postal Code (Optional)</label>
+                <input type="text" name="postalCode" value={formData.postalCode}
+                  onChange={handleChange} placeholder="100001" autoComplete="off" />
               </div>
             </div>
 
-            {/* Custom Measurements (Optional) */}
-            <div className="form-section">
+            <div className="checkout-section">
               <h2>Custom Measurements (Optional)</h2>
-              <p className="form-subtitle">Provide your measurements for custom tailoring</p>
+              <p className="section-note">Provide your measurements for a custom fit</p>
 
               <div className="form-row">
                 <div className="form-group">
                   <label>Chest (inches)</label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName || ''}  // ✅ Default to empty string
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    required
-                    />
+                  <input type="number" name="chest" value={formData.chest}
+                    onChange={handleChange} placeholder="e.g. 42" autoComplete="off" />
                 </div>
-
                 <div className="form-group">
                   <label>Waist (inches)</label>
-                                    <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName || ''}  // ✅ Default to empty string
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    required
-                    />
+                  <input type="number" name="waist" value={formData.waist}
+                    onChange={handleChange} placeholder="e.g. 34" autoComplete="off" />
                 </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
                   <label>Hips (inches)</label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName || ''}  // ✅ Default to empty string
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    required
-                    />
+                  <input type="number" name="hips" value={formData.hips}
+                    onChange={handleChange} placeholder="e.g. 40" autoComplete="off" />
                 </div>
-
                 <div className="form-group">
                   <label>Shoulder (inches)</label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName || ''}  // ✅ Default to empty string
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    required
-                    />
+                  <input type="number" name="shoulder" value={formData.shoulder}
+                    onChange={handleChange} placeholder="e.g. 18" autoComplete="off" />
                 </div>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
                   <label>Sleeve Length (inches)</label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName || ''}  // ✅ Default to empty string
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    required
-                    />
+                  <input type="number" name="sleeveLength" value={formData.sleeveLength}
+                    onChange={handleChange} placeholder="e.g. 24" autoComplete="off" />
                 </div>
-
                 <div className="form-group">
                   <label>Length (inches)</label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName || ''}  // ✅ Default to empty string
-                    onChange={handleChange}
-                    placeholder="Enter your full name"
-                    required
-                    />
+                  <input type="number" name="length" value={formData.length}
+                    onChange={handleChange} placeholder="e.g. 28" autoComplete="off" />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column - Order Summary */}
+          {/* ✅ CHANGED: Right column now shows designer order summary instead of cart items */}
           <div className="order-summary">
             <h2>Order Summary</h2>
 
             <div className="summary-items">
-              {cartItems.map(item => (
-                <div key={item.id} className="summary-item">
-                  <div className="item-details">
-                    <p className="item-name">{item.name}</p>
-                    <p className="item-qty">Qty: {item.quantity} {item.unit}(s)</p>
-                  </div>
-                  <p className="item-price">₦{(item.price * item.quantity).toLocaleString()}</p>
+              <div className="summary-item">
+                <div className="item-info">
+                  <h4>{designerName}</h4>
+                  <p style={{ fontSize: '0.85rem', color: '#888', marginTop: 4 }}>
+                    {orderDescription}
+                  </p>
                 </div>
-              ))}
+                <div className="item-price">₦{agreedAmount.toLocaleString()}</div>
+              </div>
             </div>
-
-            <div className="summary-divider"></div>
 
             <div className="summary-totals">
-              <div className="total-row">
+              <div className="summary-row">
                 <span>Subtotal</span>
-                <span>₦{subtotal.toLocaleString()}</span>
+                <span>₦{agreedAmount.toLocaleString()}</span>
               </div>
-
-              <div className="total-row">
+              <div className="summary-row">
                 <span>Shipping</span>
-                <span>{shipping === 0 ? 'FREE' : `₦${shipping.toLocaleString()}`}</span>
+                <span>FREE</span>
               </div>
-
               <div className="summary-divider"></div>
-
-              <div className="total-row total-final">
-                <span>TOTAL</span>
-                <span>₦{total.toLocaleString()}</span>
+              <div className="summary-row summary-total">
+                <span>Total</span>
+                <span>₦{agreedAmount.toLocaleString()}</span>
               </div>
             </div>
 
-            {error && (
-              <div className="error-message">
-                {error}
-              </div>
-            )}
+            <div className="checkout-actions">
+              {/* ✅ CHANGED: back button uses navigate(-1) instead of hardcoded /cart */}
+              <button className="btn-back-to-cart"
+                onClick={() => navigate(-1)} type="button" disabled={processing}>
+                ← Back
+              </button>
 
-            <button 
-              type="submit" 
-              className="btn-place-order"
-              disabled={loading}
-            >
-              {loading ? 'Processing...' : 'Place Order'}
-            </button>
-
-            <a href="/cart" className="btn-back-cart">Back to Cart</a>
+              <button className="btn-place-order"
+                onClick={handlePayment} disabled={processing} type="button">
+                {processing ? 'Initializing Payment...' : 'Proceed to Payment →'}
+              </button>
+            </div>
           </div>
-        </form>
+
+        </div>
       </div>
     </div>
   );

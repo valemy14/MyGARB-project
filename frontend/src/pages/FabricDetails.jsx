@@ -299,6 +299,12 @@ function FabricDetails() {
                 View Cart
               </button>
             )}
+            <button 
+                className="btn-continue-shopping"
+                onClick={() => window.location.href = '/fabrics'}
+            >
+                Continue Shopping
+            </button>
           </div>
         </div>
 

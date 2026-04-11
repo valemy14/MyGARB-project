@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const orderSchema = new mongoose.Schema({
     orderNumber: {
         type: String,
-        unique: true,
         
     },
     
@@ -14,37 +13,29 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
     
-    items: [{
-        fabric: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Fabric',
-            required: true
-        },
-        fabricName: {
-            type: String,
-            required: true
-        },
-        quantity: {
-            type: Number,
-            required: true,
-            min: 1
-        },
-        unit: {
-            type: String,
-            enum: ['yards', 'meters', 'pieces'],
-            default: 'yards'
-        },
-        price: {
-            type: Number,
-            required: true,
-            min: 0
-        },
-        subtotal: {
-            type: Number,
-            required: true,
-            min: 0
-        }
-    }],
+    designer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DesignerProfile',
+        required: true
+    },
+
+    collection: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Collection',
+        default: null
+    },
+
+    orderDescription: {
+        type: String,
+        required: true,
+        maxlength: 1000
+    },
+
+    conversation: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Conversation',
+        default: null
+    },
     
     customMeasurements: {
         chest: { type: Number },
@@ -104,7 +95,7 @@ const orderSchema = new mongoose.Schema({
         }
     },
     
-    totalAmount: {
+    agreedAmount: {
         type: Number,
         required: true,
         min: 0
@@ -124,12 +115,26 @@ const orderSchema = new mongoose.Schema({
     
     paymentMethod: {
         type: String,
-        enum: ['paystack', 'bank_transfer', 'cash_on_delivery'],
+        enum: ['paystack', 'flutterwave', 'bank_transfer', 'cash_on_delivery'],
         default: 'paystack'
     },
     
     paymentReference: {
-        type: String
+    type: String,
+    unique: true,  
+    sparse: true,  
+    default: null
+},
+
+
+transactionId: {
+    type: String,
+    default: null
+},
+    
+    paidAt: {
+        type: Date,
+        default: null
     },
     
     estimatedDeliveryDate: {
@@ -152,67 +157,47 @@ const orderSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Generate order number before saving
-orderSchema.pre('save', function(next) {
-    if (!this.orderNumber) {
-        const timestamp = Date.now().toString();
-        const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-        this.orderNumber = `MG${timestamp.slice(-6)}${random}`;
-    }
-   
+orderSchema.pre('save', async function() {
+  if (!this.orderNumber) {
+    const timestamp = Date.now().toString();
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    this.orderNumber = `MG${timestamp.slice(-6)}${random}`;
+  }
+
+  if (this.isModified('paymentStatus') && this.paymentStatus === 'paid') {
+    if (!this.paidAt) this.paidAt = new Date();
+  }
 });
 
 // Indexes for better query performance
 orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
+orderSchema.index({ paymentStatus: 1 });
+orderSchema.index({ orderNumber: 1 }, {unique: true});
 
 const Order = mongoose.model('Order', orderSchema);
 
 // Validation for creating order
 function validateOrder(order) {
-    const schema = Joi.object({
-        items: Joi.array().items(
-            Joi.object({
-                fabric: Joi.string().required(),
-                quantity: Joi.number().min(1).required(),
-                unit: Joi.string().valid('yards', 'meters', 'pieces').default('yards')
-            })
-        ).min(1).required(),
-        
-        customMeasurements: Joi.object({
-            chest: Joi.number().min(0),
-            waist: Joi.number().min(0),
-            hips: Joi.number().min(0),
-            shoulder: Joi.number().min(0),
-            sleeveLength: Joi.number().min(0),
-            length: Joi.number().min(0),
-            inseam: Joi.number().min(0),
-            neck: Joi.number().min(0),
-            armhole: Joi.number().min(0),
-            wrist: Joi.number().min(0),
-            measurementUnit: Joi.string().valid('inches', 'cm').default('inches'),
-            notes: Joi.string().max(1000).allow('')
-        }).optional(),
-        
-        designNotes: Joi.string().max(2000).allow(''),
-        
-        stylePreferences: Joi.array().items(Joi.string()),
-        
-        shippingAddress: Joi.object({
-            fullName: Joi.string().required(),
-            phone: Joi.string().required(),
-            address: Joi.string().required(),
-            city: Joi.string().required(),
-            state: Joi.string().required(),
-            country: Joi.string().default('Nigeria'),
-            postalCode: Joi.string().allow('')
-        }).required(),
-        
-        paymentMethod: Joi.string().valid('paystack', 'bank_transfer', 'cash_on_delivery').default('paystack'),
-        
-        notes: Joi.string().max(1000).allow('')
-    });
-    
-    return schema.validate(order);
+  const schema = Joi.object({
+    designer: Joi.string().required(),
+    collection: Joi.string().allow(null, ''),
+    conversation: Joi.string().allow(null, ''),
+    agreedAmount: Joi.number().min(1).required(),
+    orderDescription: Joi.string().max(1000).required(),
+    customMeasurements: Joi.object({ /* keep as-is */ }).optional(),
+    shippingAddress: Joi.object({
+      fullName: Joi.string().required(),
+      phone: Joi.string().required(),
+      address: Joi.string().required(),
+      city: Joi.string().required(),
+      state: Joi.string().required(),
+      country: Joi.string().default('Nigeria'),
+      postalCode: Joi.string().allow('')
+    }).required(),
+    notes: Joi.string().max(1000).allow('')
+  });
+  return schema.validate(order);
 }
 
 // Validation for updating order status (admin)
@@ -234,7 +219,20 @@ function validateOrderCancel(data) {
     return schema.validate(data);
 }
 
+// Validation for payment update
+function validatePaymentUpdate(data) {
+    const schema = Joi.object({
+        paymentStatus: Joi.string().valid('pending', 'paid', 'failed', 'refunded').required(),
+        paymentReference: Joi.string().allow(''),
+        transactionId: Joi.string().allow(''),
+        paidAt: Joi.date().optional()
+    });
+    
+    return schema.validate(data);
+}
+
 exports.Order = Order;
 exports.validate = validateOrder;
 exports.validateOrderStatus = validateOrderStatus;
 exports.validateOrderCancel = validateOrderCancel;
+exports.validatePaymentUpdate = validatePaymentUpdate;

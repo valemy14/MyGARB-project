@@ -62,9 +62,12 @@ function Login() {
       const userCart = getUserCart();
       console.log(`${userData.name}'s cart has ${userCart.length} item(s)`);
 
-      // Success!
-      alert(`Welcome back, ${userData.name}!`);
-      navigate('/');
+      // Success! Redirect based on role
+        if (userData.role === 'designer') {
+        navigate('/dashboard');
+        } else {
+        navigate('/');
+        }
 
     } catch (err) {
       setError(err.message || 'Invalid email or password');

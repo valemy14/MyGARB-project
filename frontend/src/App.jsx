@@ -13,7 +13,11 @@ import WhyChoosePhasionable from './pages/WhyChoosePhasionable';
 import MoreToExplore from './pages/MoreToExplore';
 import ContactSection from './pages/ContactSection';
 import CustomerReviews from './pages/CustomerReviews';
-// import OurDesigners from './pages/OurDesigners';
+import OurDesigners from './pages/OurDesigners';
+import DesignerDetail from './pages/DesignerDetail';
+import PaymentVerify from './pages/PaymentVerify';
+import DesignerDashboard from './pages/DesignerDashboard';
+
 
 // Other pages
 import Fabrics from './pages/Fabrics';
@@ -45,10 +49,10 @@ function AppContent() {
   const location = useLocation();
   
   // Pages where we hide BOTH header and footer
-  const hideHeaderFooterOnPages = ['/login', '/signup'];
+  const hideHeaderFooterOnPages = ['/login', '/signup', '/verify','/dashboard'];
   
   // Pages where we only hide footer
-  const hideFooterOnPages = ['/cart', '/checkout', '/order-confirmation'];
+  const hideFooterOnPages = ['/cart', '/checkout', '/order-confirmation',];
   
   const shouldShowHeader = !hideHeaderFooterOnPages.includes(location.pathname);
   const shouldShowFooter = !hideHeaderFooterOnPages.includes(location.pathname) && 
@@ -68,7 +72,10 @@ function AppContent() {
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        {/* <Route path="/ourdesigners" element={<OurDesigners />} /> */}
+        <Route path="/ourdesigners" element={<OurDesigners />} />
+        <Route path="/designer/:id" element={<DesignerDetail />} />
+        <Route path="/verify" element={<PaymentVerify />} />
+        <Route path="/dashboard" element={<DesignerDashboard />} />
       </Routes>
       
       {shouldShowFooter && <Footer />}
