@@ -17,7 +17,7 @@ import OurDesigners from './pages/OurDesigners';
 import DesignerDetail from './pages/DesignerDetail';
 import PaymentVerify from './pages/PaymentVerify';
 import DesignerDashboard from './pages/DesignerDashboard';
-
+import ChatPage from './pages/ChatPage';
 
 // Other pages
 import Fabrics from './pages/Fabrics';
@@ -47,21 +47,32 @@ function LandingPage() {
 
 function AppContent() {
   const location = useLocation();
-  
-  // Pages where we hide BOTH header and footer
-  const hideHeaderFooterOnPages = ['/login', '/signup', '/verify','/dashboard'];
-  
-  // Pages where we only hide footer
-  const hideFooterOnPages = ['/cart', '/checkout', '/order-confirmation',];
-  
-  const shouldShowHeader = !hideHeaderFooterOnPages.includes(location.pathname);
-  const shouldShowFooter = !hideHeaderFooterOnPages.includes(location.pathname) && 
-                           !hideFooterOnPages.includes(location.pathname);
-  
+
+  // Pages with NO header AND NO footer
+  const hideHeaderFooter =
+    location.pathname === '/login'             ||
+    location.pathname === '/signup'            ||
+    location.pathname === '/verify'            ||
+    location.pathname.startsWith('/dashboard') ||
+    location.pathname.startsWith('/chat');
+
+  // Pages that HAVE a header but NO footer
+  const hideFooterOnly =
+    location.pathname === '/cart'               ||
+    location.pathname === '/checkout'           ||
+    location.pathname === '/order-confirmation' ||
+    location.pathname === '/ourdesigners'       || 
+    location.pathname === '/fabrics'            || 
+    location.pathname.startsWith('/designer/')  || 
+    location.pathname.startsWith('/fabric/');      
+
+  const showHeader = !hideHeaderFooter;
+  const showFooter = !hideHeaderFooter && !hideFooterOnly;
+
   return (
     <>
-      {shouldShowHeader && <Header />}
-      
+      {showHeader && <Header />}
+
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/fabrics" element={<Fabrics />} />
@@ -76,9 +87,11 @@ function AppContent() {
         <Route path="/designer/:id" element={<DesignerDetail />} />
         <Route path="/verify" element={<PaymentVerify />} />
         <Route path="/dashboard" element={<DesignerDashboard />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat/:conversationId" element={<ChatPage />} />
       </Routes>
-      
-      {shouldShowFooter && <Footer />}
+
+      {showFooter && <Footer />}
     </>
   );
 }

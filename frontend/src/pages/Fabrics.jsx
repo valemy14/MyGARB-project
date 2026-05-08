@@ -1,99 +1,59 @@
 import { useState, useEffect } from 'react';
-import { P1, P2, P3, P5, P6, P7, P8, P9, P10, P11, P12, P13 } from '../assets/Index';
+import { useNavigate } from 'react-router-dom';
+
+const formatLabel = (str) =>
+  str?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || '';
 
 function Fabrics() {
- 
-  const USE_API = true;  // ← Change to true when company data is ready
-  const [fabrics, setFabrics] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('All');
-
-  // PLACEHOLDER DATA - Using local images
-  const placeholderFabrics = [
-    // Row 1 - HOT products
-    { id: 1, name: 'Kaftan Shine', image: P1, category: 'HOT' },
-    { id: 2, name: 'Yellow Mix Agbada', image: P2, category: 'HOT' },
-    { id: 3, name: 'Shine On Me Gown', image: P3, category: 'HOT' },
-    { id: 4, name: 'Angelic Dress', image: P5, category: 'HOT' },
-    
-    // Row 2 - HOT products
-    { id: 5, name: 'Grey Fitted Kaftan', image: P6, category: 'HOT' },
-    { id: 6, name: 'Summer Blue Men Agbada', image: P7, category: 'HOT' },
-    { id: 7, name: 'Tailored 2 pieces', image: P8, category: 'HOT' },
-    { id: 8, name: 'Solid V Neck Agbada', image: P9, category: 'HOT' },
-    
-    // Row 3 - HOT products (shirts, trousers)
-    { id: 9, name: 'Blue Fitted Shirt', image: P10, category: 'HOT' },
-    { id: 10, name: 'Black Trousers', image: P11, category: 'HOT' },
-    { id: 11, name: 'White Shirt Collection', image: P12, category: 'HOT' },
-    { id: 12, name: 'Solid V Neck Agbada', image: P13, category: 'HOT' },
-    
-    // Sale products
-    { id: 13, name: 'Premium Ankara Set', image: P1, category: 'Sale' },
-    { id: 14, name: 'Designer Agbada', image: P2, category: 'Sale' },
-    { id: 15, name: 'Traditional Kaftan', image: P3, category: 'Sale' },
-    { id: 16, name: 'Modern Agbada', image: P5, category: 'Sale' },
-    
-    // New Arrivals
-    { id: 17, name: 'Custom Kaftan Design', image: P6, category: 'New Arrivals' },
-    { id: 18, name: 'Bespoke Agbada', image: P7, category: 'New Arrivals' },
-    { id: 19, name: 'Tailored Ensemble', image: P8, category: 'New Arrivals' },
-    { id: 20, name: 'Custom Traditional Wear', image: P9, category: 'New Arrivals' },
-    
-    // CUSTOMIZATION
-    { id: 21, name: 'Custom Design 1', image: P10, category: 'CUSTOMIZATION' },
-    { id: 22, name: 'Custom Design 2', image: P11, category: 'CUSTOMIZATION' },
-    { id: 23, name: 'Custom Design 3', image: P12, category: 'CUSTOMIZATION' },
-    { id: 24, name: 'Custom Design 4', image: P13, category: 'CUSTOMIZATION' },
-  ];
+  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
 
   useEffect(() => {
-    if (USE_API) {
-      fetchFabrics();
-    } else {
-      setFabrics(placeholderFabrics);
-    }
-  }, []);
+    fetchItems();
+  }, [search]);
 
-  const fetchFabrics = async () => {
+  const fetchItems = async () => {
     try {
       setLoading(true);
       setError('');
 
-      const response = await fetch('http://localhost:5000/api/mygarb/fabrics');
-      if (!response.ok) throw new Error('Failed to fetch fabrics');
+      let url = 'http://localhost:5000/api/mygarb/designers/portfolio/all';
+      if (search) url += `?search=${encodeURIComponent(search)}`;
 
+      const response = await fetch(url);
       const result = await response.json();
-      const mappedFabrics = result.data.map(fabric => ({
-        id: fabric._id,
-        name: fabric.name,
-        image: fabric.images?.[0]?.url || 'https://via.placeholder.com/300x400',
-        category: fabric.category,
-      }));
 
-      setFabrics(mappedFabrics);
+      if (!result.success) throw new Error(result.message || 'Failed to load products');
+      setItems(result.data);
     } catch (err) {
-      setError(err.message || 'Failed to load fabrics');
+      console.error('Fetch products error:', err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(searchInput.trim());
+  };
 
+  const handleClearSearch = () => {
+    setSearch('');
+    setSearchInput('');
+  };
 
-  // Filter fabrics by active tab
-   const filteredFabrics = activeTab === 'All' 
-  ? fabrics 
-  : fabrics.filter(fabric => fabric.category === activeTab);
-
-   if (loading) {
+  if (loading) {
     return (
       <div className="fabrics-listing-page">
         <div className="container">
           <div className="loading-state">
             <div className="spinner"></div>
-            <p>Loading fabrics...</p>
+            <p>Loading designs...</p>
           </div>
         </div>
       </div>
@@ -106,11 +66,9 @@ function Fabrics() {
         <div className="container">
           <div className="error-state">
             <div className="error-icon">⚠️</div>
-            <h2>Oops! Something went wrong</h2>
+            <h2>Something went wrong</h2>
             <p>{error}</p>
-            <button onClick={() => USE_API ? fetchFabrics() : setFabrics(placeholderFabrics)} className="btn-retry">
-              Try Again
-            </button>
+            <button onClick={fetchItems} className="btn-retry">Try Again</button>
           </div>
         </div>
       </div>
@@ -120,78 +78,103 @@ function Fabrics() {
   return (
     <div className="fabrics-listing-page">
       <div className="container">
-        
-        {/* Page Title */}
+
         <div className="products-header">
-          <h1>Our Products</h1>
+          <h1>Our Designers' Work</h1>
+          <p className="products-subtitle">
+            Browse pieces made by our talented designers — click any item to see full details
+          </p>
         </div>
 
-        {/* Category Tabs */}
-        <div className="category-tabs">
-                <button
-                    className={`tab-btn ${activeTab === 'All' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('All')}
-                >
-                    All Fabrics
-                </button>
-                <button
-                    className={`tab-btn ${activeTab === 'Ankara' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('Ankara')}
-                >
-                    Ankara
-                </button>
-                <button
-                    className={`tab-btn ${activeTab === 'Silk' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('Silk')}
-                >
-                    Silk
-                </button>
-                <button
-                    className={`tab-btn ${activeTab === 'Lace' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('Lace')}
-                >
-                    Lace
-                </button>
-                <button
-                    className={`tab-btn ${activeTab === 'Cotton' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('Cotton')}
-                >
-                    Cotton
-                </button>
-                <button
-                    className={`tab-btn ${activeTab === 'Velvet' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('Velvet')}
-                >
-                    Velvet
-                </button>
-            </div>
+        {/* Search — only filter needed */}
+        <form className="products-search" onSubmit={handleSearch}>
+          <input
+            type="text"
+            placeholder="Search by design name or designer..."
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            className="products-search-input"
+          />
+          <button type="submit" className="products-search-btn">Search</button>
+          {search && (
+            <button type="button" className="products-search-clear" onClick={handleClearSearch}>
+              ✕ Clear
+            </button>
+          )}
+        </form>
 
-        {/* Products Grid - NOW SHOWS 12 PRODUCTS (3 ROWS) */}
-        <div className="products-grid">
-          {filteredFabrics.slice(0, 12).map((fabric) => (
-           <div 
-                key={fabric.id} 
-                className="product-card"
-                onClick={() => window.location.href = `/fabric/${fabric.id}`}
-                style={{ cursor: 'pointer' }}
+        {search && (
+          <p className="products-search-label">
+            Results for "<strong>{search}</strong>" — {items.length} found
+          </p>
+        )}
+
+        {/* Empty state */}
+        {items.length === 0 ? (
+          <div className="products-empty">
+            <div style={{ fontSize: '3rem', marginBottom: '12px' }}>🎨</div>
+            <h3>No designs found</h3>
+            <p>{search ? 'Try a different search term' : 'No designs uploaded yet'}</p>
+            {search && (
+              <button className="btn-retry" onClick={handleClearSearch}>
+                Show All Designs
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            <p className="products-count">{items.length} design{items.length !== 1 ? 's' : ''}</p>
+
+            <div className="products-grid">
+              {items.map((item) => (
+                <div
+                  key={item._id}
+                  className="product-card"
+                  onClick={() => navigate(`/fabric/${item._id}`)}
+                  style={{ cursor: 'pointer' }}
                 >
-                <div className="product-image">
-                    <img src={fabric.image} alt={fabric.name} />
+                  <div className="product-image">
+                    <img src={item.image} alt={item.title} />
+                    {item.category && (
+                      <span className="product-category-badge">
+                        {formatLabel(item.category)}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="product-info">
+                    <h3 className="product-title">{item.title}</h3>
+
+                    <div className="product-designer-credit">
+                      <div className="product-designer-avatar">
+                        {item.designer.profilePicture ? (
+                          <img src={item.designer.profilePicture} alt={item.designer.businessName} />
+                        ) : (
+                          <span>{item.designer.businessName?.charAt(0)?.toUpperCase() || 'D'}</span>
+                        )}
+                      </div>
+                      <div className="product-designer-info">
+                        <span className="product-designer-by">by</span>
+                        <span className="product-designer-name">{item.designer.businessName}</span>
+                        {item.designer.location?.city && (
+                          <span className="product-designer-location">
+                            📍 {item.designer.location.city}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {item.description && (
+                      <p className="product-description">{item.description}</p>
+                    )}
+
+                    <button className="product-view-btn">View Details →</button>
+                  </div>
                 </div>
-                <div className="product-name">
-                    <h3>{fabric.name}</h3>
-                </div>
+              ))}
             </div>
-          ))}
-        </div>
-
-        {/* See All Button */}
-        <div className="see-all-section">
-          <button className="btn-see-all">
-            See all <span className="arrow">→</span>
-          </button>
-        </div>
-
+          </>
+        )}
       </div>
     </div>
   );

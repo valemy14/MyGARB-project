@@ -33,7 +33,7 @@ export default function PaymentVerify() {
         setMessage(data.message || 'Payment verified successfully!');
         setOrderData(data.order);
 
-        // ✅ ADD THIS — save to localStorage as backup
+        // ADD THIS — save to localStorage as backup
         localStorage.setItem('mygarb_last_order', JSON.stringify(data.order));
 
         
@@ -112,7 +112,7 @@ export default function PaymentVerify() {
                     </p>
                 </div>
                 )}
-                {/* ✅ Manual button instead of auto-redirect */}
+                {/* Manual button instead of auto-redirect */}
                 <button
                 onClick={() => navigate('/order-confirmation', { state: { order: orderData } })}
                 style={{

@@ -2,35 +2,27 @@ const express = require('express');
 const router = express.Router();
 const Conversation = require('../models/conversation');
 const { DesignerProfile } = require('../models/DesignerProfile');
-const { User } = require('../models/User');
 const auth = require('../middleware/auth');
 
-// Get all user's conversations
+// ── GET all user's conversations ──────────────────────────────────────────────
 router.get('/conversations', auth, async (req, res) => {
   try {
     const conversations = await Conversation.find({
       'participants.userId': req.user._id
     })
-    .sort({ updatedAt: -1 })
-    .populate('participants.userId', 'name email')
-    .populate('designer', 'businessName')
-    .limit(50);
+      .sort({ updatedAt: -1 })
+      .populate('participants.userId', 'name email')
+      .populate('designer', 'businessName')
+      .limit(50);
 
-    res.json({
-      success: true,
-      data: conversations
-    });
-
+    res.json({ success: true, data: conversations });
   } catch (err) {
     console.error('Get conversations error:', err);
-    res.status(500).json({
-      success: false,
-      error: err.message
-    });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// Get single conversation with messages
+// ── GET single conversation with messages ─────────────────────────────────────
 router.get('/conversations/:id', auth, async (req, res) => {
   try {
     const conversation = await Conversation.findById(req.params.id)
@@ -38,69 +30,87 @@ router.get('/conversations/:id', auth, async (req, res) => {
       .populate('designer', 'businessName');
 
     if (!conversation) {
-      return res.status(404).json({
-        success: false,
-        error: 'Conversation not found'
-      });
+      return res.status(404).json({ success: false, error: 'Conversation not found' });
     }
 
-    // Check if user is a participant
     const isParticipant = conversation.participants.some(
       p => p.userId._id.toString() === req.user._id.toString()
     );
-
     if (!isParticipant) {
-      return res.status(403).json({
-        success: false,
-        error: 'Access denied'
-      });
+      return res.status(403).json({ success: false, error: 'Access denied' });
     }
 
-    // Mark messages as read
+    // Mark messages as read and reset unread count
     conversation.messages.forEach(msg => {
-      if (msg.sender.toString() !== req.user._id.toString()) {
-        msg.read = true;
-      }
+      if (msg.sender.toString() !== req.user._id.toString()) msg.read = true;
     });
-
-    // Reset unread count for this user
     conversation.unreadCount.set(req.user._id.toString(), 0);
     await conversation.save();
 
-    res.json({
-      success: true,
-      data: conversation
-    });
-
+    res.json({ success: true, data: conversation });
   } catch (err) {
     console.error('Get conversation error:', err);
-    res.status(500).json({
-      success: false,
-      error: err.message
-    });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// Start new conversation with designer
+// GET /chat/quotes/:quoteId — checkout fetches this to pre-fill
+router.get('/quotes/:quoteId', auth, async (req, res) => {
+  try {
+    const Quote = require('../models/Quote');
+    const quote = await Quote.findById(req.params.quoteId);
+
+    if (!quote) return res.status(404).json({ success: false, error: 'Quote not found' });
+
+    // Only the customer can fetch their own quote
+    if (quote.customer.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, error: 'Access denied' });
+    }
+
+    if (['expired', 'cancelled'].includes(quote.status)) {
+      return res.status(400).json({ success: false, error: `This quote is ${quote.status}` });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        _id:          quote._id,
+        amount:       quote.amount,
+        notes:        quote.notes,
+        designerName: quote.designerName,
+        designerId:   quote.designer,
+        conversation: quote.conversation,
+        status:       quote.status
+      }
+    });
+  } catch (err) {
+    console.error('Get quote error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── POST start/find conversation with designer ────────────────────────────────
 router.post('/conversations/start', auth, async (req, res) => {
   try {
     const { designerId, initialMessage } = req.body;
 
-    // Validate designer exists
     const designer = await DesignerProfile.findById(designerId).populate('user');
     if (!designer) {
-      return res.status(404).json({
-        success: false,
-        error: 'Designer not found'
-      });
+      return res.status(404).json({ success: false, error: 'Designer not found' });
     }
 
-    // Check if conversation already exists
+    const designerUserId = designer.user._id;
+
+    
     let conversation = await Conversation.findOne({
-      'participants.userId': { $all: [req.user._id, designer.user._id] },
-      designer: designerId
+      designer: designerId,
+      $and: [
+        { participants: { $elemMatch: { userId: req.user._id } } },
+        { participants: { $elemMatch: { userId: designerUserId } } }
+      ]
     });
 
+    
     if (conversation) {
       return res.json({
         success: true,
@@ -109,19 +119,11 @@ router.post('/conversations/start', auth, async (req, res) => {
       });
     }
 
-    // Create new conversation
+    
     conversation = new Conversation({
       participants: [
-        {
-          userId: req.user._id,
-          role: 'customer',
-          name: req.user.name
-        },
-        {
-          userId: designer.user._id,
-          role: 'designer',
-          name: designer.businessName
-        }
+        { userId: req.user._id,   role: 'customer', name: req.user.name },
+        { userId: designerUserId, role: 'designer',  name: designer.businessName }
       ],
       designer: designerId,
       messages: initialMessage ? [{
@@ -139,7 +141,7 @@ router.post('/conversations/start', auth, async (req, res) => {
       } : null,
       unreadCount: new Map([
         [req.user._id.toString(), 0],
-        [designer.user._id.toString(), initialMessage ? 1 : 0]
+        [designerUserId.toString(), initialMessage ? 1 : 0]
       ])
     });
 
@@ -150,50 +152,59 @@ router.post('/conversations/start', auth, async (req, res) => {
       data: conversation,
       message: 'Conversation created successfully'
     });
-
   } catch (err) {
     console.error('Start conversation error:', err);
-    res.status(500).json({
-      success: false,
-      error: err.message
-    });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
-// Send message (fallback if socket fails)
+// ── DELETE conversation ───────────────────────────────────────────────────────
+router.delete('/conversations/:id', auth, async (req, res) => {
+  try {
+    const conversation = await Conversation.findById(req.params.id);
+
+    if (!conversation) {
+      return res.status(404).json({ success: false, error: 'Conversation not found' });
+    }
+
+    // Only a participant can delete
+    const isParticipant = conversation.participants.some(
+      p => p.userId.toString() === req.user._id.toString()
+    );
+    if (!isParticipant) {
+      return res.status(403).json({ success: false, error: 'Access denied' });
+    }
+
+    await Conversation.findByIdAndDelete(req.params.id);
+
+    res.json({ success: true, message: 'Conversation deleted' });
+  } catch (err) {
+    console.error('Delete conversation error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── POST send message (HTTP fallback if socket fails) ─────────────────────────
 router.post('/conversations/:id/message', auth, async (req, res) => {
   try {
     const { text } = req.body;
 
     if (!text || !text.trim()) {
-      return res.status(400).json({
-        success: false,
-        error: 'Message text is required'
-      });
+      return res.status(400).json({ success: false, error: 'Message text is required' });
     }
 
     const conversation = await Conversation.findById(req.params.id);
-
     if (!conversation) {
-      return res.status(404).json({
-        success: false,
-        error: 'Conversation not found'
-      });
+      return res.status(404).json({ success: false, error: 'Conversation not found' });
     }
 
-    // Check if user is a participant
     const isParticipant = conversation.participants.some(
       p => p.userId.toString() === req.user._id.toString()
     );
-
     if (!isParticipant) {
-      return res.status(403).json({
-        success: false,
-        error: 'Access denied'
-      });
+      return res.status(403).json({ success: false, error: 'Access denied' });
     }
 
-    // Add message
     const newMessage = {
       sender: req.user._id,
       senderName: req.user.name,
@@ -203,8 +214,6 @@ router.post('/conversations/:id/message', auth, async (req, res) => {
     };
 
     conversation.messages.push(newMessage);
-
-    // Update last message
     conversation.lastMessage = {
       text: text.trim(),
       timestamp: new Date(),
@@ -212,27 +221,18 @@ router.post('/conversations/:id/message', auth, async (req, res) => {
       senderName: req.user.name
     };
 
-    // Increment unread count for other participants
     conversation.participants.forEach(p => {
       if (p.userId.toString() !== req.user._id.toString()) {
-        const currentCount = conversation.unreadCount.get(p.userId.toString()) || 0;
-        conversation.unreadCount.set(p.userId.toString(), currentCount + 1);
+        const count = conversation.unreadCount.get(p.userId.toString()) || 0;
+        conversation.unreadCount.set(p.userId.toString(), count + 1);
       }
     });
 
     await conversation.save();
-
-    res.json({
-      success: true,
-      data: newMessage
-    });
-
+    res.json({ success: true, data: newMessage });
   } catch (err) {
     console.error('Send message error:', err);
-    res.status(500).json({
-      success: false,
-      error: err.message
-    });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 

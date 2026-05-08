@@ -11,6 +11,7 @@ function auth(req, res, next) {
         req.user = decoded;
         next();
     } catch (ex) {
+        console.error('Auth error:', ex.message);
         res.status(400).send('Invalid token.');
     }
 }

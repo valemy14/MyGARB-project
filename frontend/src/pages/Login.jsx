@@ -4,7 +4,7 @@ import { getUserCart } from '../utils/cartHelpers';
 
 function Login() {
   const navigate = useNavigate();
-  
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +23,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.email || !formData.password) {
       setError('Please fill in all fields');
       return;
@@ -44,30 +44,40 @@ function Login() {
         })
       });
 
-      // Get token from header
-      const token = response.headers.get('x-auth-token');
-      
-      // Get user data from body
       const userData = await response.json();
 
       if (!response.ok) {
-        throw new Error(userData.error || 'Login failed');
+        throw new Error(userData.error || userData.message || 'Login failed');
       }
 
-      // Save token and user data
+      
+      
+      const token =
+        userData.token ||           // { token: '...', name: '...', role: '...' }
+        userData.data?.token ||     // { data: { token: '...', user: {...} } }
+        response.headers.get('x-auth-token'); // fallback: header (unlikely)
+
+      if (!token) {
+        console.error('Login response:', userData); 
+        throw new Error('Login succeeded but no token was returned. Check your backend login route.');
+      }
+
+      
+      const userToSave = userData.user || userData.data?.user || userData;
+
       localStorage.setItem('mygarb_token', token);
-      localStorage.setItem('mygarb_user', JSON.stringify(userData));
+      localStorage.setItem('mygarb_user', JSON.stringify(userToSave));
 
-      // Check user's cart (their cart will automatically load when they visit /cart)
+      // Check user's cart
       const userCart = getUserCart();
-      console.log(`${userData.name}'s cart has ${userCart.length} item(s)`);
+      console.log(`${userToSave.name}'s cart has ${userCart.length} item(s)`);
 
-      // Success! Redirect based on role
-        if (userData.role === 'designer') {
+      // Redirect based on role
+      if (userToSave.role === 'designer') {
         navigate('/dashboard');
-        } else {
+      } else {
         navigate('/');
-        }
+      }
 
     } catch (err) {
       setError(err.message || 'Invalid email or password');
@@ -80,7 +90,7 @@ function Login() {
     <div className="auth-page login-page">
       <div className="auth-container">
         <div className="auth-content">
-          
+
           <div className="auth-logo">
             <div className="logo-circle">P</div>
           </div>

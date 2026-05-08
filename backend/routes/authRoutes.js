@@ -2,7 +2,7 @@ const { User, validate } = require('../models/User');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const Joi = require('joi');  // ← ADD THIS (was missing!)
+const Joi = require('joi'); 
 const auth = require('../middleware/auth');
 
 // Register new user
@@ -10,11 +10,11 @@ router.post('/register', async (req, res) => {
     try {
         // Validate input
         const { error } = validate(req.body);
-        if (error) return res.status(400).json({ error: error.details[0].message });  // ✅ Changed to .json()
+        if (error) return res.status(400).json({ error: error.details[0].message });  
 
         // Check if user already exists
         let user = await User.findOne({ email: req.body.email });
-        if (user) return res.status(400).json({ error: 'User already registered with this email.' });  // ✅ Changed to .json()
+        if (user) return res.status(400).json({ error: 'User already registered with this email.' });  
 
         // Create new user
         user = new User({
@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
         // Save user
         await user.save();
 
-        // ✅ Auto-create designer profile if role is designer
+        // Auto-create designer profile if role is designer
         if (req.body.role === 'designer') {
         const { DesignerProfile } = require('../models/DesignerProfile');
         const designerProfile = new DesignerProfile({
@@ -48,7 +48,7 @@ router.post('/register', async (req, res) => {
         const token = user.generateAuthToken();
 
         // Send response (token in header, user data in body)
-        res.header('x-auth-token', token).json({  // ✅ Changed .json() and removed redundant token
+        res.header('x-auth-token', token).json({  
             _id: user._id,
             name: user.name,
             email: user.email,
@@ -58,7 +58,7 @@ router.post('/register', async (req, res) => {
 
     } catch (error) {
         console.error('Register error:', error);
-        res.status(500).json({ error: 'Something went wrong: ' + error.message });  // ✅ Changed to .json()
+        res.status(500).json({ error: 'Something went wrong: ' + error.message });  
     }
 });
 
@@ -85,7 +85,7 @@ router.post('/login', async (req, res) => {
         const token = user.generateAuthToken();
 
         // Send token in header, user data in body
-        res.header('x-auth-token', token).json({  // ✅ Changed to .json()
+        res.header('x-auth-token', token).json({  
             _id: user._id,
             name: user.name,
             email: user.email,
@@ -100,16 +100,16 @@ router.post('/login', async (req, res) => {
 });
 
 // Get current user profile (Protected)
-router.get('/me', auth, async (req, res) => {  // ✅ Removed array brackets (not needed)
+router.get('/me', auth, async (req, res) => {  
     try {
         const user = await User.findById(req.user._id).select('-password');
-        if (!user) return res.status(404).json({ error: 'User not found.' });  // ✅ Changed to .json()
+        if (!user) return res.status(404).json({ error: 'User not found.' });  
 
-        res.json(user);  // ✅ Changed to .json()
+        res.json(user);  
 
     } catch (error) {
         console.error('Get profile error:', error);
-        res.status(500).json({ error: 'Something went wrong: ' + error.message });  // ✅ Changed to .json()
+        res.status(500).json({ error: 'Something went wrong: ' + error.message });  
     }
 });
 

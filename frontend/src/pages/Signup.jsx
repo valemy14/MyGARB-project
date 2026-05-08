@@ -24,7 +24,7 @@ function Signup() {
     confirmPassword: ''
   });
 
-  // ✅ NEW: designer profile fields
+  //  NEW: designer profile fields
   const [designerData, setDesignerData] = useState({
     businessName: '',
     bio: '',
@@ -53,7 +53,7 @@ function Signup() {
     setError('');
   };
 
-  // ✅ NEW: toggle specialty selection
+  //  NEW: toggle specialty selection
   const toggleSpecialty = (s) => {
     setDesignerData(prev => ({
       ...prev,
@@ -133,7 +133,7 @@ function Signup() {
       localStorage.setItem('mygarb_user', JSON.stringify(userData));
       clearUserCart();
 
-      // ✅ Designer goes to their profile to complete setup, customer goes home
+      //  Designer goes to their profile to complete setup, customer goes home
       if (selectedRole === 'designer') {
         navigate('/dashboard');
       } else {

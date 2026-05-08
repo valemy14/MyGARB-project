@@ -17,7 +17,8 @@ function DesignerDetail() {
   const [designer, setDesigner] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('portfolio'); // portfolio, about, reviews
+  const [activeTab, setActiveTab] = useState('portfolio');
+  const [startingChat, setStartingChat] = useState(false); 
 
   useEffect(() => {
     fetchDesignerDetails();
@@ -42,6 +43,18 @@ function DesignerDetail() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleContactDesigner = () => {
+    const token = localStorage.getItem('mygarb_token');
+
+    if (!token) {
+      navigate('/login'); 
+      return;
+    }
+
+    setStartingChat(true); 
+    navigate(`/chat?designerId=${designer._id}`); 
   };
 
   const formatSpecialty = (specialty) => {
@@ -69,6 +82,10 @@ function DesignerDetail() {
     }
     return stars;
   };
+
+  // FIX: Guard against missing or zero rating to avoid toFixed() crash
+  const safeRating = designer?.rating ?? 0;
+  const safeTotalReviews = designer?.totalReviews ?? 0;
 
   if (loading) {
     return (
@@ -120,15 +137,15 @@ function DesignerDetail() {
 
         {/* Header Section */}
         <div className="designer-header">
-          
+
           {/* Profile Image */}
           <div className="designer-profile-image">
-            {designer.portfolio?.[0]?.image ? (
-              <img src={designer.portfolio[0].image} alt={designer.businessName} />
+            {designer.profilePicture ? (
+            <img src={designer.profilePicture} alt={designer.businessName} />
             ) : (
-              <div className="profile-placeholder">
+            <div className="profile-placeholder">
                 {designer.businessName?.charAt(0) || 'D'}
-              </div>
+            </div>
             )}
             {designer.verified && (
               <div className="verified-badge">
@@ -140,14 +157,14 @@ function DesignerDetail() {
           {/* Designer Info */}
           <div className="designer-header-info">
             <h1 className="designer-name">{designer.businessName}</h1>
-            
+
             {/* Rating */}
             <div className="designer-rating-section">
               <div className="stars">
-                {renderStars(designer.rating)}
+                {renderStars(safeRating)}
               </div>
               <span className="rating-text">
-                {designer.rating.toFixed(1)} ({designer.totalReviews} reviews)
+                {safeRating.toFixed(1)} ({safeTotalReviews} reviews)
               </span>
             </div>
 
@@ -164,30 +181,32 @@ function DesignerDetail() {
             {/* Stats */}
             <div className="designer-stats-grid">
               <div className="stat-item">
-                <div className="stat-number">{designer.completedOrders}</div>
+                <div className="stat-number">{designer.completedOrders ?? 0}</div>
                 <div className="stat-label">Orders Completed</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">{designer.experience}+</div>
+                <div className="stat-number">{designer.experience ?? 0}+</div>
                 <div className="stat-label">Years Experience</div>
               </div>
               <div className="stat-item">
                 <FontAwesomeIcon icon={faClock} className="stat-icon" />
-                <div className="stat-label">{designer.responseTime}</div>
+                <div className="stat-label">{designer.responseTime ?? 'N/A'}</div>
               </div>
             </div>
 
             {/* Specialties */}
-            <div className="designer-specialties-section">
-              <h3>Specialties</h3>
-              <div className="specialties-tags">
-                {designer.specialties.map((spec, idx) => (
-                  <span key={idx} className="specialty-tag">
-                    {formatSpecialty(spec)}
-                  </span>
-                ))}
+            {designer.specialties?.length > 0 && ( 
+              <div className="designer-specialties-section">
+                <h3>Specialties</h3>
+                <div className="specialties-tags">
+                  {designer.specialties.map((spec, idx) => (
+                    <span key={idx} className="specialty-tag">
+                      {formatSpecialty(spec)}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Pricing */}
             {designer.pricing?.startingPrice && (
@@ -200,21 +219,32 @@ function DesignerDetail() {
             )}
 
             {/* Contact Button */}
-            <button className="btn-contact-designer">
-              <FontAwesomeIcon icon={faEnvelope} /> Contact Designer
+            <button
+              className="btn-contact-designer"
+              onClick={handleContactDesigner}
+              disabled={startingChat}
+            >
+              <FontAwesomeIcon icon={faEnvelope} />
+              {startingChat ? ' Starting Chat...' : ' Contact Designer'}
             </button>
 
             {/* Social Links */}
             <div className="designer-social-links">
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <FontAwesomeIcon icon={faInstagram} />
-              </a>
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <FontAwesomeIcon icon={faBehance} />
-              </a>
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <FontAwesomeIcon icon={faLinkedin} />
-              </a>
+              {designer.socialLinks?.instagram && ( 
+                <a href={designer.socialLinks.instagram} target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon={faInstagram} />
+                </a>
+              )}
+              {designer.socialLinks?.behance && (
+                <a href={designer.socialLinks.behance} target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon={faBehance} />
+                </a>
+              )}
+              {designer.socialLinks?.linkedin && (
+                <a href={designer.socialLinks.linkedin} target="_blank" rel="noopener noreferrer">
+                  <FontAwesomeIcon icon={faLinkedin} />
+                </a>
+              )}
             </div>
 
           </div>
@@ -222,23 +252,23 @@ function DesignerDetail() {
 
         {/* Tabs Section */}
         <div className="designer-tabs">
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'portfolio' ? 'active' : ''}`}
             onClick={() => setActiveTab('portfolio')}
           >
             Portfolio
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'about' ? 'active' : ''}`}
             onClick={() => setActiveTab('about')}
           >
             About
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setActiveTab('reviews')}
           >
-            Reviews ({designer.totalReviews})
+            Reviews ({safeTotalReviews})
           </button>
         </div>
 
@@ -251,10 +281,15 @@ function DesignerDetail() {
               {designer.portfolio && designer.portfolio.length > 0 ? (
                 <div className="portfolio-grid">
                   {designer.portfolio.map((item, idx) => (
-                    <div key={idx} className="portfolio-item">
+                    <div key={idx} className="portfolio-item" 
+                      onClick={() => navigate(`/fabric/${item._id}`)} 
+                      style={{ cursor: 'pointer' }}>
                       <img src={item.image} alt={item.title} />
                       <div className="portfolio-overlay">
-                        <h4>{item.title}</h4>
+                        {item.isForSale && item.price > 0 && (
+                        <span className="portfolio-price-badge">₦{item.price.toLocaleString()}</span>
+                      )}
+                         <h4>{item.title}</h4>
                         {item.description && <p>{item.description}</p>}
                       </div>
                     </div>
@@ -274,7 +309,7 @@ function DesignerDetail() {
               <div className="about-content">
                 <h3>About {designer.businessName}</h3>
                 <p className="bio-text">{designer.bio}</p>
-                
+
                 <div className="about-details">
                   <div className="detail-item">
                     <strong>Experience:</strong>
@@ -288,7 +323,7 @@ function DesignerDetail() {
                   </div>
                   <div className="detail-item">
                     <strong>Response Time:</strong>
-                    <span>{designer.responseTime}</span>
+                    <span>{designer.responseTime ?? 'N/A'}</span>
                   </div>
                 </div>
               </div>
@@ -298,7 +333,7 @@ function DesignerDetail() {
           {/* Reviews Tab */}
           {activeTab === 'reviews' && (
             <div className="reviews-section">
-              {designer.totalReviews > 0 ? (
+              {safeTotalReviews > 0 ? (
                 <div className="reviews-list">
                   <div className="review-item">
                     <div className="review-header">
@@ -317,7 +352,6 @@ function DesignerDetail() {
                       Excellent work! Very professional and delivered on time. Highly recommended!
                     </p>
                   </div>
-                  {/* More reviews would be dynamically loaded here */}
                 </div>
               ) : (
                 <div className="empty-state">

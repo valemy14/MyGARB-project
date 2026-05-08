@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
-
+const configRoutes = require('./routes/configRoutes');
+const notificationRoutes = require('./routes/notifications');
 // ============================================
 // CREATE HTTP SERVER FOR SOCKET.IO
 // ============================================
@@ -67,7 +68,9 @@ app.use('/api/mygarb/fabrics', fabrics);
 app.use('/api/mygarb/orders', orders);
 app.use('/api/mygarb/designers', designerRoutes);
 app.use('/api/mygarb/payment', paymentRoutes);
-app.use('/api/mygarb/chat', chatRoutes);  // ✅ NEW CHAT ROUTES
+app.use('/api/mygarb/chat', chatRoutes);  
+app.use('/api/mygarb/config', configRoutes);
+app.use('/api/mygarb/notifications', notificationRoutes);
 
 // ============================================
 // TEST ROUTE

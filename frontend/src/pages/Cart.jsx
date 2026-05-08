@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { getUserCart, saveUserCart } from '../utils/cartHelpers';
+import { useNavigate } from 'react-router-dom';
 
 function Cart() {
   // Get user-specific cart
   const [cartItems, setCartItems] = useState(() => getUserCart());
+  const navigate = useNavigate();
 
   // Save to user-specific cart when changed
   useEffect(() => {
@@ -135,7 +137,22 @@ function Cart() {
               <span>₦{total.toLocaleString()}</span>
             </div>
 
-            <button className="btn-checkout" onClick={() => window.location.href = '/checkout'}>
+            <button className="btn-checkout" onClick={() => {
+                const token = localStorage.getItem('mygarb_token');
+                if (!token) { navigate('/login'); return; }
+                const firstItem = cartItems[0];
+                const orderDescription = cartItems.map(i => `${i.name} x${i.quantity}`).join(', ');
+                navigate('/checkout', {
+                  state: {
+                    designer:         firstItem.designerId,
+                    designerName:     firstItem.designerName || 'Designer',
+                    agreedAmount:     total,
+                    orderDescription: orderDescription,
+                    collection:       null,
+                    conversation:     null
+                  }
+                });
+              }}>
               Proceed to Checkout
             </button>
 

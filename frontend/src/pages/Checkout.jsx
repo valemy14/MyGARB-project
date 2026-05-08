@@ -1,51 +1,141 @@
-// ✅ CHANGED: removed getUserCart, saveUserCart imports (not needed for designer flow)
-// ✅ CHANGED: added useLocation, useNavigate imports
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../services/api';
 
-function Checkout() {
-  const { state } = useLocation();
-  const navigate = useNavigate();
 
-  // ====================================================
-  // 🧪 TEST DATA — REMOVE THIS BLOCK WHEN DESIGNER 
-  // FLOW (chat → agree price → navigate to checkout) IS READY
-  // ====================================================
-  const testState = {
-    designer: '6748a1b2c3d4e5f6a7b8c9d0',  // fake designer ID for testing
-    designerName: 'Adire by Tola',
-    agreedAmount: 5000,                      // ₦5,000 test charge
-    orderDescription: 'Custom agbada - test order',
-    collection: null,
-    conversation: null
+function calculateServiceFee(agreedPrice, config) {
+  const {
+    percentageFee = 2,
+    baseFee       = 1000,
+    cap           = 3500
+  } = config;
+
+  if (agreedPrice === 0) return { serviceFee: 0, total: 0, percentageAmount: 0 };
+  if (agreedPrice < 0)  return null; // invalid
+
+  const percentageAmount = (percentageFee / 100) * agreedPrice;
+  const rawFee           = baseFee + percentageAmount;
+  let   finalFee         = Math.min(rawFee, cap);   // apply cap
+        finalFee         = Math.max(finalFee, baseFee); // apply floor
+        finalFee         = Math.round(finalFee);
+
+  return {
+    percentageAmount: Math.round(percentageAmount),
+    rawFee:           Math.round(rawFee),
+    serviceFee:       finalFee,
+    total:            Math.round(agreedPrice + finalFee)
   };
-  // Uses real state if coming from designer page, otherwise uses test data above
-  const orderContext = state?.designer ? state : testState;
-  const { designer, designerName, agreedAmount, orderDescription, collection, conversation } = orderContext;
-  // ====================================================
-  // 🧪 END TEST DATA
-  // ====================================================
+}
 
-  const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState('');
+function Checkout() {
+  // supports both quoteId URL and navigation state
+const { state } = useLocation();
+const navigate  = useNavigate();
+const [searchParams] = useSearchParams();
+const quoteId = searchParams.get('quoteId');
 
-  // ✅ CHANGED: removed cart-related fields (cartItems, subtotal, total)
-  // ✅ CHANGED: removed designNotes from formData (now comes from chat/orderDescription)
+const [quoteData, setQuoteData]     = useState(null);
+const [quoteLoading, setQuoteLoading] = useState(!!quoteId);
+const [quoteError, setQuoteError]   = useState('');
+
+ // ── State ────────────────────────────────────────────────────────────────────
+  const [processing, setProcessing]   = useState(false);
+  const [error, setError]             = useState('');
+
+  // Service fee state
+  const [feeConfig, setFeeConfig]     = useState({ percentageFee: 2, baseFee: 1000, cap: 3500 });
+  const [feeLoading, setFeeLoading]   = useState(true);
+  const [feeError, setFeeError]       = useState(false);
+
   const [formData, setFormData] = useState({
-    fullName: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    chest: '',
-    waist: '',
-    hips: '',
-    shoulder: '',
-    sleeveLength: '',
-    length: ''
+    fullName: '', phone: '', address: '', city: '',
+    state: '', postalCode: '', chest: '', waist: '',
+    hips: '', shoulder: '', sleeveLength: '', length: ''
   });
+
+   // ── Fetch fee config once on mount ──────────────────────────────────────────
+  useEffect(() => {
+    const fetchFeeConfig = async () => {
+      try {
+        setFeeLoading(true);
+        const { data } = await api.get('/config/service-fee');
+        if (data.success) {
+          setFeeConfig(data.data);
+          if (data.fallback) setFeeError(true); // DB failed, using defaults
+        }
+      } catch (err) {
+        console.error('Failed to fetch fee config, using defaults:', err);
+        setFeeError(true); // still usable — defaults are loaded
+      } finally {
+        setFeeLoading(false);
+      }
+    };
+    fetchFeeConfig();
+  }, []);
+
+
+useEffect(() => {
+  if (!quoteId) return;
+  api.get(`/chat/quotes/${quoteId}`)
+    .then(({ data }) => {
+      if (data.success) setQuoteData(data.data);
+      else setQuoteError(data.error || 'Quote not found');
+    })
+    .catch(() => setQuoteError('Failed to load quote'))
+    .finally(() => setQuoteLoading(false));
+}, [quoteId]);
+
+// Derive order values from quote (if quoteId) or navigation state
+const designer         = quoteData?.designerId   || state?.designer;
+const designerName     = quoteData?.designerName  || state?.designerName;
+const agreedAmount     = quoteData?.amount        || state?.agreedAmount || 0;
+const orderDescription = quoteData?.notes         || state?.orderDescription || 'Custom order';
+const conversation     = quoteData?.conversation  || state?.conversation || null;
+const collection       = state?.collection        || null;
+
+// Loading state while fetching quote
+if (quoteLoading) return (
+  <div className="checkout-page">
+    <div className="checkout-container" style={{ textAlign: 'center', padding: '60px 20px' }}>
+      <div className="spinner"></div>
+      <p>Loading your quote...</p>
+    </div>
+  </div>
+);
+
+// Error state if quote fetch failed
+if (quoteError) return (
+  <div className="checkout-page">
+    <div className="checkout-container" style={{ textAlign: 'center', padding: '60px 20px' }}>
+      <h2>Quote not found</h2>
+      <p style={{ color: '#888', margin: '12px 0 24px' }}>{quoteError}</p>
+      <button className="btn-place-order" onClick={() => navigate('/chat')}>
+        Back to Messages
+      </button>
+    </div>
+  </div>
+);
+
+// No order at all
+if (!designer) return (
+  <div className="checkout-page">
+    <div className="checkout-container" style={{ textAlign: 'center', padding: '60px 20px' }}>
+      <h2>No order found</h2>
+      <p style={{ color: '#888', margin: '12px 0 24px' }}>
+        Please contact a designer and agree on a price before checking out.
+      </p>
+      <button className="btn-place-order" onClick={() => navigate('/ourdesigners')}>
+        Browse Designers →
+      </button>
+    </div>
+  </div>
+);
+ 
+ 
+
+  // ── Calculate fees in real time ──────────────────────────────────────────────
+  const feeBreakdown = calculateServiceFee(agreedAmount, feeConfig);
+  const isInvalidPrice = agreedAmount < 0;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,7 +147,14 @@ function Checkout() {
     e.preventDefault();
     setError('');
 
-    if (!formData.fullName || !formData.phone || !formData.address || !formData.city || !formData.state) {
+    //  Edge case: reject negative price
+    if (isInvalidPrice) {
+      setError('Invalid order amount. Please go back and try again.');
+      return;
+    }
+
+    if (!formData.fullName || !formData.phone || !formData.address ||
+        !formData.city || !formData.state) {
       setError('Please fill in all required fields (Full Name, Phone, Address, City, State)');
       return;
     }
@@ -72,38 +169,37 @@ function Checkout() {
     setProcessing(true);
 
     try {
-      // ✅ CHANGED: orderData now sends designer fields instead of fabric cart items
       const orderData = {
         designer,
         agreedAmount,
+        quoteId: quoteId || null,
+        // Send fee breakdown so backend can store it and verify
+        serviceFee:   feeBreakdown.serviceFee,
+        totalAmount:  feeBreakdown.total,
         orderDescription,
-        collection: collection || null,
+        collection:   collection || null,
         conversation: conversation || null,
         shippingAddress: {
-          fullName: formData.fullName.trim(),
-          phone: formData.phone.trim(),
-          address: formData.address.trim(),
-          city: formData.city.trim(),
-          state: formData.state.trim(),
-          country: 'Nigeria',
+          fullName:   formData.fullName.trim(),
+          phone:      formData.phone.trim(),
+          address:    formData.address.trim(),
+          city:       formData.city.trim(),
+          state:      formData.state.trim(),
+          country:    'Nigeria',
           postalCode: formData.postalCode.trim() || ''
         },
         customMeasurements: {
-          chest: formData.chest ? Number(formData.chest) : undefined,
-          waist: formData.waist ? Number(formData.waist) : undefined,
-          hips: formData.hips ? Number(formData.hips) : undefined,
-          shoulder: formData.shoulder ? Number(formData.shoulder) : undefined,
-          sleeveLength: formData.sleeveLength ? Number(formData.sleeveLength) : undefined,
-          length: formData.length ? Number(formData.length) : undefined,
+          chest:          formData.chest       ? Number(formData.chest)       : undefined,
+          waist:          formData.waist       ? Number(formData.waist)       : undefined,
+          hips:           formData.hips        ? Number(formData.hips)        : undefined,
+          shoulder:       formData.shoulder    ? Number(formData.shoulder)    : undefined,
+          sleeveLength:   formData.sleeveLength? Number(formData.sleeveLength): undefined,
+          length:         formData.length      ? Number(formData.length)      : undefined,
           measurementUnit: 'inches'
         }
       };
 
-      console.log('Sending order data:', orderData);
-
       const { data } = await api.post('/payment/init', orderData);
-
-      console.log('Payment init response:', data);
 
       if (!data.success) throw new Error(data.message || 'Payment initialization failed');
 
@@ -123,20 +219,14 @@ function Checkout() {
         <h1>Checkout</h1>
 
         {error && (
-          <div className="error-message" style={{
-            padding: '15px',
-            background: '#ffebee',
-            border: '1px solid #ef5350',
-            borderRadius: '8px',
-            color: '#c62828',
-            marginBottom: '20px'
-          }}>
+          <div className="checkout-error-banner">
             {error}
           </div>
         )}
 
         <div className="checkout-content">
-          {/* Left Column - Form — UNCHANGED */}
+
+          {/* ── Left: Shipping + Measurements form ── */}
           <div className="checkout-form">
 
             <div className="checkout-section">
@@ -225,47 +315,105 @@ function Checkout() {
             </div>
           </div>
 
-          {/* ✅ CHANGED: Right column now shows designer order summary instead of cart items */}
+          {/* ── Right: Order Summary with fee breakdown ── */}
           <div className="order-summary">
             <h2>Order Summary</h2>
 
+            {/* Designer + description */}
             <div className="summary-items">
               <div className="summary-item">
                 <div className="item-info">
                   <h4>{designerName}</h4>
-                  <p style={{ fontSize: '0.85rem', color: '#888', marginTop: 4 }}>
-                    {orderDescription}
-                  </p>
+                  <p className="summary-item-desc">{orderDescription}</p>
                 </div>
                 <div className="item-price">₦{agreedAmount.toLocaleString()}</div>
               </div>
             </div>
 
+            {/*  Fee breakdown — the new section */}
             <div className="summary-totals">
+
+              {/* Item / agreed price */}
               <div className="summary-row">
-                <span>Subtotal</span>
+                <span>Item Price</span>
                 <span>₦{agreedAmount.toLocaleString()}</span>
               </div>
+
+              {/* Service fee row with loading/error states */}
               <div className="summary-row">
-                <span>Shipping</span>
-                <span>FREE</span>
+                <span className="summary-fee-label">
+                  Service Fee
+                  <span className="summary-fee-info" title={
+                    `Base ₦${feeConfig.baseFee.toLocaleString()} + ${feeConfig.percentageFee}% of item price (max ₦${feeConfig.cap.toLocaleString()})`
+                  }>
+                    ⓘ
+                  </span>
+                </span>
+
+                {feeLoading ? (
+                  <span className="summary-fee-loading">Calculating...</span>
+                ) : isInvalidPrice ? (
+                  <span className="summary-fee-error">Invalid price</span>
+                ) : agreedAmount === 0 ? (
+                  <span>₦0</span>
+                ) : (
+                  <span>₦{feeBreakdown.serviceFee.toLocaleString()}</span>
+                )}
               </div>
+
+              {/* Fee explanation — shows how fee was calculated */}
+              {!feeLoading && !isInvalidPrice && agreedAmount > 0 && (
+                <div className="summary-fee-breakdown">
+                  <span>
+                    Base ₦{feeConfig.baseFee.toLocaleString()} +{' '}
+                    {feeConfig.percentageFee}% (₦{feeBreakdown.percentageAmount.toLocaleString()})
+                    {feeBreakdown.rawFee > feeConfig.cap
+                      ? ` → capped at ₦${feeConfig.cap.toLocaleString()}`
+                      : ''}
+                  </span>
+                </div>
+              )}
+
+              {/* Fee config fallback notice */}
+              {feeError && (
+                <div className="summary-fee-fallback-notice">
+                  ⚠️ Using default fee rates
+                </div>
+              )}
+
               <div className="summary-divider"></div>
+
+              {/* Total payable */}
               <div className="summary-row summary-total">
-                <span>Total</span>
-                <span>₦{agreedAmount.toLocaleString()}</span>
+                <span>Total Payable</span>
+                <span>
+                  {feeLoading
+                    ? 'Calculating...'
+                    : isInvalidPrice
+                      ? 'Invalid'
+                      : `₦${feeBreakdown.total.toLocaleString()}`
+                  }
+                </span>
               </div>
             </div>
 
+            {/* Charge notice */}
+            <p className="summary-charge-notice">
+              You will be charged ₦{feeLoading ? '...' : feeBreakdown?.total?.toLocaleString() || '0'} via Paystack
+            </p>
+
             <div className="checkout-actions">
-              {/* ✅ CHANGED: back button uses navigate(-1) instead of hardcoded /cart */}
               <button className="btn-back-to-cart"
                 onClick={() => navigate(-1)} type="button" disabled={processing}>
                 ← Back
               </button>
 
-              <button className="btn-place-order"
-                onClick={handlePayment} disabled={processing} type="button">
+              <button
+                className="btn-place-order"
+                onClick={handlePayment}
+                disabled={processing || feeLoading || isInvalidPrice}
+                type="button"
+              >
                 {processing ? 'Initializing Payment...' : 'Proceed to Payment →'}
               </button>
             </div>

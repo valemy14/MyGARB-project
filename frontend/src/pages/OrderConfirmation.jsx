@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function OrderConfirmation() {
-  const { state } = useLocation();  // ✅ read from state not URL params
+  const { state } = useLocation();  
   const navigate = useNavigate();
   const order = state?.order || JSON.parse(localStorage.getItem('mygarb_last_order'));
 
@@ -39,7 +39,7 @@ function OrderConfirmation() {
           <p className="order-id">Order ID: <strong>{order.orderNumber}</strong></p>
         </div>
 
-        {/* Order Summary — ✅ updated for designer model */}
+        {/* Order Summary —  updated for designer model */}
         <div className="order-summary-box">
           <h2>Order Summary</h2>
 
@@ -54,7 +54,7 @@ function OrderConfirmation() {
 
           <div className="order-total">
             <span>Total Paid:</span>
-            {/* ✅ agreedAmount instead of totalAmount */}
+            {/* agreedAmount instead of totalAmount */}
             <span className="total-amount">₦{order.agreedAmount?.toLocaleString()}</span>
           </div>
         </div>

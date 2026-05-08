@@ -181,7 +181,7 @@ router.post('/', auth, admin, async (req, res) => {
         if (error) {
             return res.status(400).json({ 
                 error: error.details[0].message 
-            });  // Changed to json()
+            });  
         }
 
         const fabric = new Fabric({
@@ -191,7 +191,7 @@ router.post('/', auth, admin, async (req, res) => {
 
         await fabric.save();
 
-        res.json({  // Changed from res.send() to res.json()
+        res.json({  
             success: true,
             message: 'Fabric created successfully',
             data: fabric
@@ -203,12 +203,12 @@ router.post('/', auth, admin, async (req, res) => {
         if (error.code === 11000) {
             return res.status(400).json({ 
                 error: 'Fabric with this name already exists' 
-            });  // Changed to json()
+            });  
         }
 
         res.status(500).json({ 
             error: 'Something went wrong: ' + error.message 
-        });  // Changed to json()
+        });  
     }
 });
 

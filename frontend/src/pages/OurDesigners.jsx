@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { G26, G27 } from '../assets/Index';
 
 // Import Font Awesome
@@ -10,6 +11,7 @@ const OurDesigners = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+  const navigate = useNavigate();
 
   // Specialty filters
   const specialties = [
@@ -164,7 +166,7 @@ const OurDesigners = () => {
             <div className="card" key={designer._id || index}>
               {/* Designer Image */}
               <img 
-                src={designer.portfolio?.[0]?.image || (index % 2 === 0 ? G26 : G27)} 
+                src={designer.profilePicture || designer.portfolio?.[0]?.image || (index % 2 === 0 ? G26 : G27)} 
                 alt={designer.businessName} 
                 className="designer-img" 
               />
@@ -185,7 +187,7 @@ const OurDesigners = () => {
                   {'☆'.repeat(5 - Math.floor(designer.rating))}
                 </span>
                 <span style={{ fontSize: '14px', color: '#666' }}>
-                  {designer.rating.toFixed(1)} ({designer.totalReviews} reviews)
+                  {(designer.rating ?? 0).toFixed(1)} ({designer.totalReviews ?? 0} reviews)
                 </span>
               </div>
 
@@ -249,10 +251,10 @@ const OurDesigners = () => {
               {/* Contact Button */}
              <button 
                     className="contact-btn"
-                    onClick={() => window.location.href = `/designer/${designer._id}`}
+                    onClick={() => navigate(`/designer/${designer._id}`)}
                     >
-                    Contact Designer
-            </button>
+            Contact Designer
+</button>
             </div>
           ))}
         </div>
