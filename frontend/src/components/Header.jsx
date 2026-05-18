@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { G4 } from '../assets/Index';
+import { API_BASE } from '../config';
 
 
 const Bell = ({ notifCount, notifOpen, setNotifOpen, markNotifsRead, notifs }) => (
@@ -83,7 +84,7 @@ const Header = () => {
       const token = localStorage.getItem('mygarb_token');
       if (!token) return;
 
-      const response = await fetch('http://localhost:5000/api/mygarb/chat/conversations', {
+      const response = await fetch(`${API_BASE}/api/mygarb/chat/conversations`, {
         headers: { 'x-auth-token': token }
       });
 
@@ -112,7 +113,7 @@ const Header = () => {
   try {
     const token = localStorage.getItem('mygarb_token');
     if (!token) return;
-    const response = await fetch('http://localhost:5000/api/mygarb/notifications', {
+    const response = await fetch(`${API_BASE}/api/mygarb/notifications`, {
       headers: { 'x-auth-token': token }
     });
     if (!response.ok) return;
@@ -130,7 +131,7 @@ const markNotifsRead = async () => {
   try {
     const token = localStorage.getItem('mygarb_token');
     if (!token) return;
-    await fetch('http://localhost:5000/api/mygarb/notifications/read-all', {
+    await fetch(`${API_BASE}/api/mygarb/notifications/read-all`, {
       method: 'PUT',
       headers: { 'x-auth-token': token }
     });

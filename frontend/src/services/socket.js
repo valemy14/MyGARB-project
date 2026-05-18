@@ -11,7 +11,7 @@ class SocketService {
     const token = localStorage.getItem('mygarb_token');
     if (!token) { console.error('No token. Cannot connect to socket.'); return; }
 
-    this.socket = io('http://localhost:5000', {
+   this.socket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
       auth: { token },
       transports: ['polling', 'websocket'],
       reconnection: true,

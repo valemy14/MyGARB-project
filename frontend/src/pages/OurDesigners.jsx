@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { G26, G27 } from '../assets/Index';
+import { API_BASE } from '../config';
 
 // Import Font Awesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,7 +38,7 @@ const OurDesigners = () => {
       setLoading(true);
       setError('');
 
-      let url = 'http://localhost:5000/api/mygarb/designers';
+      let url = `${API_BASE}/api/mygarb/designers`;
       
       // Add filter if not "All"
       if (activeFilter !== 'All') {

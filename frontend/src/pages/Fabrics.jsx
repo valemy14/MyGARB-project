@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../config';
 
 const formatLabel = (str) =>
   str?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || '';
@@ -21,7 +22,7 @@ function Fabrics() {
       setLoading(true);
       setError('');
 
-      let url = 'http://localhost:5000/api/mygarb/designers/portfolio/all';
+      let url = `${API_BASE}/api/mygarb/designers/portfolio/all`;
       if (search) url += `?search=${encodeURIComponent(search)}`;
 
       const response = await fetch(url);

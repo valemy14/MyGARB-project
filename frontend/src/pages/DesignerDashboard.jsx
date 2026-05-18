@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../config';
 
-const API = 'http://localhost:5000/api/mygarb';
+const API = `${API_BASE}/api/mygarb`;
 
 const SPECIALTIES = [
   'suits', 'native_wear_men', 'native_wear_women', 'wedding_dresses',

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { clearUserCart } from '../utils/cartHelpers';
+import { API_BASE } from '../config';
 
 const SPECIALTIES = [
   'suits', 'native_wear_men', 'native_wear_women', 'wedding_dresses',
@@ -118,7 +119,7 @@ function Signup() {
         })
       };
 
-      const response = await fetch('http://localhost:5000/api/mygarb/auth/register', {
+      const response = await fetch(`${API_BASE}/api/mygarb/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

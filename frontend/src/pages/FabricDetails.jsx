@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faMapMarkerAlt, faClock, faArrowLeft, faEnvelope, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { getUserCart, saveUserCart } from '../utils/cartHelpers';
+import { API_BASE } from '../config';
 
 const formatLabel = (str) =>
   str?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || '';
@@ -23,7 +24,7 @@ function FabricDetails() {
     try {
       setLoading(true);
       setError('');
-      const response = await fetch(`http://localhost:5000/api/mygarb/designers/portfolio/item/${id}`);
+      const response = await fetch(`${API_BASE}/api/mygarb/designers/portfolio/item/${id}`);
       const result = await response.json();
       if (!result.success) throw new Error(result.message || 'Product not found');
       setItem(result.data);

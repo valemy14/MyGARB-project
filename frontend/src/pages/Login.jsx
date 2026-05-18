@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserCart } from '../utils/cartHelpers';
+import { API_BASE } from '../config';
 
 function Login() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ function Login() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/mygarb/auth/login', {
+      const response = await fetch(`${API_BASE}/api/mygarb/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
