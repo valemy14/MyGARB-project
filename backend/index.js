@@ -17,12 +17,17 @@ const server = http.createServer(app);
 // ============================================
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:3001', 'http://localhost:5173', 'http://localhost:5174'],
+    origin: [
+      'http://localhost:3001',
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'https://my-garb-project.vercel.app',         
+      process.env.FRONTEND_URL              
+    ].filter(Boolean),
     credentials: true,
     methods: ['GET', 'POST']
   }
 });
-
 // Initialize chat socket handlers
 const initializeChat = require('./sockets/chatSocket');
 initializeChat(io);
@@ -48,7 +53,13 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/mygarbDat
 // CORS CONFIGURATION
 // ============================================
 const corsOptions = {
-  origin: ['http://localhost:3001', 'http://localhost:5173', 'http://localhost:5174'],
+  origin: [
+    'http://localhost:3001',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https:///my-garb-project.vercel.app',            
+    process.env.FRONTEND_URL               
+  ].filter(Boolean),
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
