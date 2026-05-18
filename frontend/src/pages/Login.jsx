@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserCart } from '../utils/cartHelpers';
+import { Link } from 'react-router-dom';
 import { API_BASE } from '../config';
 
 function Login() {
@@ -141,7 +142,7 @@ function Login() {
           </form>
 
           <p className="auth-footer">
-            Don't have an account? <a href="/signup">Sign up</a>
+            Don't have an account? <Link to="/signup">Sign up</Link>
           </p>
 
         </div>
